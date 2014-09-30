@@ -4,11 +4,11 @@
 int main (int argc, char **argv) {
 FILE *fp;
 int c;
-
+// test
 /* The first argument is the program name, The second argument is usually file */
 if(argc != 2)   {
 	printf("Incorrect number of arguments.\n");
-	return -1;
+	return 5;
 }
 
 
@@ -23,7 +23,7 @@ if(fp == NULL){
 /* Scans document character by character */
 while ( (c = fgetc(fp)) != EOF ){
 
-	printf("%c\n", c);
+	printf("WE NEEEEEEDDDDDD THISSSSSSS%c\n", c);
 	
 }
 
