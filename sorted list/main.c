@@ -42,11 +42,16 @@ void destroyBasicTypeNoAlloc(void *p) {
 	return;
 }
 
-struct Node {
-	(void *) data;
-	struct Node *next;
-};
-
 int main()
 {
+
+SortedListPtr slpInt = (SortedListPtr)malloc(sizeof(SortedListPtr));
+SortedListPtr slpChar = (SortedListPtr)malloc(sizeof(SortedListPtr));
+
+SLInsert(slpInt, 8);
+SLInsert(slpInt, 9);
+SLInsert(slpInt, 100);
+
+SLInsert(slpChar, 'a');
+
 }
