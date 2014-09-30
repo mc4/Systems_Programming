@@ -102,8 +102,8 @@ int SLInsert(SortedListPtr list, void *newObj)
 		//prevptr = ptr;
 		ptr = ptr->next;
 		nextptr = ptr->next; 
-
 	}
+	//failure
 	return 0;
 }
 
