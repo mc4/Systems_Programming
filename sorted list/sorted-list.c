@@ -55,6 +55,9 @@ int SLInsert(SortedListPtr list, void *newObj)
 	//2. initialize node to be inserted
 	NodePtr temp = (NodePtr)malloc(sizeof(NodePtr));
 	temp->data = newObj;
+	temp->next = NULL;
+	temp->refCount = 1;
+
 
 	//3. insert at beginning if list is empty
 	if(list->size == 0){
@@ -76,20 +79,19 @@ int SLInsert(SortedListPtr list, void *newObj)
 		//4. duplicate insertion is an error
 		if(compare == 0){
 			//display error message?
+			free(temp);
 			return 0;
 		}
 
-	//5. insert at the end of the list
-		//TODO: finish this
+		//5. insert at the end of the list
 		if(compare == 1 && ptr->next == NULL){
 			ptr->next = temp;
 			list->size++;
 			return 1;
 		}
 
-	//6. insert in the middle
+		//6. insert in the middle
 		if(compare == 1 && compareNext == -1){
-			//TODO: check this
 			temp->next = ptr->next;
 			ptr->next = temp;
 			list->size++;
@@ -102,6 +104,7 @@ int SLInsert(SortedListPtr list, void *newObj)
 		nextptr = ptr->next; 
 	}
 	//failure
+	free(temp);
 	return 0;
 }
 
@@ -134,8 +137,12 @@ int SLRemove(SortedListPtr list, void *newObj);
  * You need to fill in this function as part of your implementation.
  */
 
-SortedListIteratorPtr SLCreateIterator(SortedListPtr list);
+SortedListIteratorPtr SLCreateIterator(SortedListPtr list){
+	SortedListIteratorPtr iter = (SortedListIteratorPtr)malloc(sizeof(SortedListIteratorPtr));
+	iter->current = list->head;
 
+	return iter;
+}
 
 /*
  * SLDestroyIterator destroys an iterator object that was created using
@@ -157,7 +164,14 @@ void SLDestroyIterator(SortedListIteratorPtr iter);
  * You need to fill in this function as part of your implementation.
 */
 
-void * SLGetItem( SortedListIteratorPtr iter );
+void * SLGetItem( SortedListIteratorPtr iter ){
+	NodePtr ptr = (NodePtr)malloc(sizeof(NodePtr));
+	ptr = iter->current;
+	ptr->data = iter->current->data;
+	ptr->next = NULL;
+	ptr->refCount++;
+	return ptr;
+}
 
 /*
  * SLNextItem returns the next object in the list encapsulated by the
