@@ -52,9 +52,11 @@ int SLInsert(SortedListPtr list, void *newObj)
 	if(list == NULL || newObj == NULL){
 		return 0; 
 	}
+
 	//2. initialize node to be inserted
 	NodePtr temp = (NodePtr)malloc(sizeof(NodePtr));
 	temp->data = newObj;
+	temp->next = NULL;
 
 	//3. insert at beginning if list is empty
 	if(list->size == 0){
@@ -70,8 +72,8 @@ int SLInsert(SortedListPtr list, void *newObj)
 	//traverses the list to find relevant ptr
 	while(ptr != NULL){
 		// compare will be -1 when ptr is smaller, 0 when equal, and 1 when newObj is smaller
-		int compare = list->compareFunc(ptr, newObj);
-		int compareNext = list->compareFunc(ptr->next, newObj);
+		int compare = list->compareFunc(ptr->data, newObj);
+		int compareNext = list->compareFunc(ptr->next->data, newObj);
 
 		//4. duplicate insertion is an error
 		if(compare == 0){
@@ -118,7 +120,33 @@ int SLInsert(SortedListPtr list, void *newObj)
  * You need to fill in this function as part of your implementation.
  */
 
-int SLRemove(SortedListPtr list, void *newObj);
+int SLRemove(SortedListPtr list, void *newObj) {
+	if(list == NULL || newObj == NULL) {
+		return NULL;
+	}
+
+	NodePtr current = list->front;
+	NodePtr prev = NULL;
+
+	// compare will be -1 when current is smaller, 0 when equal, and 1 when newObj is smaller
+	int compare = list->compareFunc(current->data, newObj);
+	
+	// iterate through list until we either find a match or newObj is greater than the current
+	while(compare > 0) {
+		prev = current; // probably not right
+		current = current->next;
+		compare = list->compareFunc(current->data, newObj);
+	}
+
+	// If we found a matching node remove it from the list (not necessarrily delete it yet)
+	if(compare == 0) {
+		// more than one pointer to node
+		if(current->refCount > 1) {
+
+		}
+	}
+
+}
 
 
 /*
