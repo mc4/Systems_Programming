@@ -57,11 +57,7 @@ int SLInsert(SortedListPtr list, void *newObj)
 	NodePtr temp = (NodePtr)malloc(sizeof(NodePtr));
 	temp->data = newObj;
 	temp->next = NULL;
-<<<<<<< HEAD
 	temp->refCount = 1;
-
-=======
->>>>>>> FETCH_HEAD
 
 	//3. insert at beginning if list is empty
 	if(list->size == 0){
