@@ -2,8 +2,6 @@
  * sorted-list.c
  */
 
- // ^_^ \\
-
 #include <stdlib.h>
 #include "sorted-list.h"
 
