@@ -2,7 +2,7 @@
  * sorted-list.c
  */
 
- //Mike
+ // ^_^ \\
 
 #include <stdlib.h>
 #include "sorted-list.h"
