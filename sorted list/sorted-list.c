@@ -213,7 +213,9 @@ void * SLGetItem( SortedListIteratorPtr iter ){
  * You need to fill in this function as part of your implementation.
  */
 
-void * SLNextItem(SortedListIteratorPtr iter);
+void * SLNextItem(SortedListIteratorPtr iter){
+	
+}
 
 int main() {
 	return 0;
