@@ -48,7 +48,7 @@ typedef struct SortedList* SortedListPtr;
  * beginning to end. You need to fill in the type as part of your implementation.
  */
 struct SortedListIterator{
-	struct Node current;
+	NodePtr current;
 };
 typedef struct SortedListIterator* SortedListIteratorPtr;
 
