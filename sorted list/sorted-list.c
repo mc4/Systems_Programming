@@ -166,7 +166,6 @@ int SLRemove(SortedListPtr list, void *newObj) {
 SortedListIteratorPtr SLCreateIterator(SortedListPtr list){
 	SortedListIteratorPtr iter = (SortedListIteratorPtr)malloc(sizeof(SortedListIteratorPtr));
 	iter->current = list->head;
-
 	return iter;
 }
 
@@ -194,9 +193,9 @@ void * SLGetItem( SortedListIteratorPtr iter ){
 	NodePtr ptr = (NodePtr)malloc(sizeof(NodePtr));
 	ptr = iter->current;
 	ptr->data = iter->current->data;
-	ptr->next = NULL;
-	ptr->refCount++;
-	return ptr;
+	//ptr->next = NULL;
+	//ptr->refCount++;
+	return ptr->data;
 }
 
 /*
@@ -214,4 +213,6 @@ void * SLGetItem( SortedListIteratorPtr iter ){
  * You need to fill in this function as part of your implementation.
  */
 
-void * SLNextItem(SortedListIteratorPtr iter);
+void * SLNextItem(SortedListIteratorPtr iter){
+
+}
