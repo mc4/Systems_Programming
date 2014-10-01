@@ -123,7 +123,7 @@ int SLInsert(SortedListPtr list, void *newObj)
 
 int SLRemove(SortedListPtr list, void *newObj) {
 	if(list == NULL || newObj == NULL) {
-		return NULL;
+		return 0;
 	}
 
 	NodePtr current = list->front;
@@ -134,7 +134,7 @@ int SLRemove(SortedListPtr list, void *newObj) {
 	
 	// iterate through list until we either find a match or newObj is greater than the current
 	while(compare > 0) {
-		prev = current; // probably not right
+		prev = current;
 		current = current->next;
 		compare = list->compareFunc(current->data, newObj);
 	}
@@ -143,7 +143,7 @@ int SLRemove(SortedListPtr list, void *newObj) {
 	if(compare == 0) {
 		// more than one pointer to node
 		if(current->refCount > 1) {
-
+			
 		}
 	}
 
@@ -165,7 +165,7 @@ int SLRemove(SortedListPtr list, void *newObj) {
 
 SortedListIteratorPtr SLCreateIterator(SortedListPtr list){
 	SortedListIteratorPtr iter = (SortedListIteratorPtr)malloc(sizeof(SortedListIteratorPtr));
-	iter->current = list->head;
+	iter->current = list->front;
 	return iter;
 }
 
@@ -190,10 +190,11 @@ void SLDestroyIterator(SortedListIteratorPtr iter);
 */
 
 void * SLGetItem( SortedListIteratorPtr iter ){
-	//TODO: return 0 if iterator advances past the end of the sorted list
 	NodePtr ptr = (NodePtr)malloc(sizeof(NodePtr));
 	ptr = iter->current;
 	ptr->data = iter->current->data;
+	//ptr->next = NULL;
+	//ptr->refCount++;
 	return ptr->data;
 }
 
@@ -212,6 +213,8 @@ void * SLGetItem( SortedListIteratorPtr iter ){
  * You need to fill in this function as part of your implementation.
  */
 
-void * SLNextItem(SortedListIteratorPtr iter){
-	
+void * SLNextItem(SortedListIteratorPtr iter);
+
+int main() {
+	return 0;
 }
