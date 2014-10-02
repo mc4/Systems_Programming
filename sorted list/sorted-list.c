@@ -48,18 +48,16 @@ void SLDestroy(SortedListPtr list);
 
 int SLInsert(SortedListPtr list, void *newObj)
 {
-	//1. if list or newO is null
 	if(list == NULL || newObj == NULL){
 		return 0; 
 	}
 
-	//2. initialize node to be inserted
 	NodePtr temp = (NodePtr)malloc(sizeof(NodePtr));
 	temp->data = newObj;
 	temp->next = NULL;
 	temp->refCount = 1;
 
-	//3. insert at beginning if list is empty
+	//insert at beginning if list is empty
 	if(list->size == 0){
 		list->front = temp;
 		list->size++;
@@ -76,21 +74,21 @@ int SLInsert(SortedListPtr list, void *newObj)
 		int compare = list->compareFunc(ptr->data, newObj);
 		int compareNext = list->compareFunc(ptr->next->data, newObj);
 
-		//4. duplicate insertion is an error
+		// duplicate insertion is an error
 		if(compare == 0){
 			//display error message?
 			free(temp);
 			return 0;
 		}
 
-		//5. insert at the end of the list
+		// insert at the end of the list
 		if(compare == 1 && ptr->next == NULL){
 			ptr->next = temp;
 			list->size++;
 			return 1;
 		}
 
-		//6. insert in the middle
+		// insert in the middle
 		if(compare == 1 && compareNext == -1){
 			temp->next = ptr->next;
 			ptr->next = temp;
@@ -98,7 +96,6 @@ int SLInsert(SortedListPtr list, void *newObj)
 			return 1;
 		}
 
-		//7. update ptr
 		//prevptr = ptr;
 		ptr = ptr->next;
 		nextptr = ptr->next; 
@@ -228,7 +225,41 @@ void * SLGetItem( SortedListIteratorPtr iter ){
  */
 
 void * SLNextItem(SortedListIteratorPtr iter){
-	
+	if(iter->current->next == NULL){ return NULL; }
+
+	NodePtr ptr = (NodePtr)malloc(sizeof(NodePtr)); 
+	ptr = iter->current;
+
+	//decrement refCount of node before moving along
+	//ptr->refCount--;
+
+	if(ptr->refCount == 0){
+		NodePtr temp = (NodePtr)malloc(sizeof(NodePtr)); //make sure this is freed in all scenarios
+		while(ptr->refCount == 0){
+			// if refCount = 0 delete node and increment ptr
+			temp = ptr;
+			ptr = ptr->next;
+			SLDeleteNode(temp); //also decrements next ptr's refCount
+		}	
+	} else { 
+		ptr = ptr->next;
+		ptr->refCount++;
+
+	}
+
+	//how to free temp if while loop isn't called?
+	iter->current = ptr;
+	return iter;
+}
+/* 
+ * Frees space allocated by node, and decrements refCount of next node 
+ * Only called when refCount is 0.	
+ */
+static void SLDeleteNode(NodePtr ptr){
+	if(ptr->next != NULL){
+		ptr->next->refCount--;
+	}
+	free(ptr);
 }
 
 int main() {
