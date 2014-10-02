@@ -49,7 +49,6 @@ void SLDestroy(SortedListPtr list) {
 	}
 }
 
-
 /*
  * SLInsert inserts a given object into a sorted list, maintaining sorted
  * order of all objects in the list.  If the new object is equal to a subset
@@ -120,7 +119,6 @@ int SLInsert(SortedListPtr list, void *newObj)
 	return 0;
 }
 
-
 /*
  * SLRemove removes a given object from a sorted list.  Sorted ordering
  * should be maintained.  SLRemove may not change the object whose
@@ -180,7 +178,6 @@ int SLRemove(SortedListPtr list, void *newObj) {
 	return 0;
 }
 
-
 /*
  * SLCreateIterator creates an iterator object that will allow the caller
  * to "walk" through the list from beginning to the end using SLNextItem.
@@ -219,7 +216,6 @@ void SLDestroyIterator(SortedListIteratorPtr iter) {
 	}
 	free(iter);
 }
-
 
 /*
  * SLGetItem returns the pointer to the data associated with the
@@ -286,12 +282,8 @@ void * SLNextItem(SortedListIteratorPtr iter){
  * Frees space allocated by node, and decrements refCount of next node 
  * Only called when a node no longer has anything pointing to it.
  */
-<<<<<<< HEAD
- 
-static void SLDeleteNode(NodePtr ptr){
-=======
+
 static void SLDeleteNode(NodePtr ptr, DestructFuncT df){
->>>>>>> FETCH_HEAD
 	if(ptr->next != NULL){
 		ptr->next->refCount--;
 	}
