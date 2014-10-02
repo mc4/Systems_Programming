@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include "sorted-list.h"
 
+static void SLDeleteNode(NodePtr);
+
 /*
  * SLCreate creates a new, empty sorted list.  The caller must provide
  * a comparator function that can be used to order objects that will be
