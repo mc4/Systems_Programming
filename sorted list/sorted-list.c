@@ -256,10 +256,12 @@ void * SLNextItem(SortedListIteratorPtr iter){
 
 	return iter;
 }
+
 /* 
  * Frees space allocated by node, and decrements refCount of next node 
  * Only called when refCount is 0.	
  */
+ 
 static void SLDeleteNode(NodePtr ptr){
 	if(ptr->next != NULL){
 		ptr->next->refCount--;
