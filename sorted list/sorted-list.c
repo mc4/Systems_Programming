@@ -2,6 +2,7 @@
  * sorted-list.c
  */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include "sorted-list.h"
 
@@ -291,17 +292,19 @@ static void SLDeleteNode(NodePtr ptr, DestructFuncT df){
 }
 
 static void printIntList(SortedListPtr list){
-	NodePtr ptr = (NodePtr)malloc(sizeof(NodePtr)); 
- 
+ 	NodePtr ptr = (NodePtr)malloc(sizeof(NodePtr));
+ 	
 	for(ptr = list->front; ptr != NULL; ptr = ptr->next){
-		printf("%d->", (int*)list->data);
+		printf("%d->", *(int*)ptr->data);
 	}
+	printf("\n");
 }
 
 static void printCharList(SortedListPtr list){
-	NodePtr ptr = (NodePtr)malloc(sizeof(NodePtr)); 
- 
+ 	NodePtr ptr = (NodePtr)malloc(sizeof(NodePtr));
+	 
 	for(ptr = list->front; ptr != NULL; ptr = ptr->next){
-		printf("%d->", (char*)list->data);
+		printf("%d->", *(char*)ptr->data);
 	}
+		printf("\n");
 }
