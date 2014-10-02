@@ -48,10 +48,14 @@ int main()
 SortedListPtr slpInt = (SortedListPtr)malloc(sizeof(SortedListPtr));
 SortedListPtr slpChar = (SortedListPtr)malloc(sizeof(SortedListPtr));
 
-SLInsert(slpInt, 8);
-SLInsert(slpInt, 9);
-SLInsert(slpInt, 100);
+SLInsert(slpInt, (void*)8);
+SLInsert(slpInt, (void*)9);
+SLInsert(slpInt, (void*)100);
 
-SLInsert(slpChar, 'a');
+SLInsert(slpChar, (void*)'a');
+SLInsert(slpChar, (void*)'z');
+SLInsert(slpChar, (void*)'x');
+
+printIntList(slpInt);
 
 }

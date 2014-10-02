@@ -6,6 +6,8 @@
 #include "sorted-list.h"
 
 static void SLDeleteNode(NodePtr, DestructFuncT);
+static void printIntList(SortedListPtr);
+static void printCharList(SortedListPtr);
 
 /*
  * SLCreate creates a new, empty sorted list.  The caller must provide
@@ -47,7 +49,7 @@ void SLDestroy(SortedListPtr list) {
 		destroyData( tmp->data );
 		free( tmp );
 	}
-}
+} 
 
 /*
  * SLInsert inserts a given object into a sorted list, maintaining sorted
@@ -291,6 +293,18 @@ static void SLDeleteNode(NodePtr ptr, DestructFuncT df){
 	free(ptr);
 }
 
-int main() {
-	return 0;
+static void printIntList(SortedListPtr list){
+	NodePtr ptr = (NodePtr)malloc(sizeof(NodePtr)); 
+ 
+	for(ptr = list->front; ptr != NULL; ptr = ptr->next){
+		printf("%d->", (int*)list->data);
+	}
+}
+
+static void printCharList(SortedListPtr list){
+	NodePtr ptr = (NodePtr)malloc(sizeof(NodePtr)); 
+ 
+	for(ptr = list->front; ptr != NULL; ptr = ptr->next){
+		printf("%d->", (char*)list->data);
+	}
 }
