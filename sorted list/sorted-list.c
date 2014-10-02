@@ -177,8 +177,10 @@ int SLRemove(SortedListPtr list, void *newObj) {
  */
 
 SortedListIteratorPtr SLCreateIterator(SortedListPtr list){
+	if(list <= 0) return NULL; 
 	SortedListIteratorPtr iter = (SortedListIteratorPtr)malloc(sizeof(SortedListIteratorPtr));
 	iter->current = list->front;
+	iter->current->refCount++;
 	return iter;
 }
 
@@ -208,7 +210,7 @@ void * SLGetItem( SortedListIteratorPtr iter ){
 	ptr->data = iter->current->data;
 	//ptr->next = NULL;
 	//ptr->refCount++;
-	return ptr->data;
+	return (void *) ptr->data;
 }
 
 /*
@@ -227,30 +229,31 @@ void * SLGetItem( SortedListIteratorPtr iter ){
  */
 
 void * SLNextItem(SortedListIteratorPtr iter){
-	if(iter->current->next == NULL){ return NULL; }
+	if(iter == NULL || iter->current == NULL || iter->current->next == NULL){ 
+		return NULL; 
+	}
 
 	NodePtr ptr = (NodePtr)malloc(sizeof(NodePtr)); 
 	ptr = iter->current;
-
-	//decrement refCount of node before moving along
-	//ptr->refCount--;
+	ptr->refCount--;
 
 	if(ptr->refCount == 0){
-		NodePtr temp = (NodePtr)malloc(sizeof(NodePtr)); //make sure this is freed in all scenarios
+		NodePtr temp = (NodePtr)malloc(sizeof(NodePtr));
 		while(ptr->refCount == 0){
-			// if refCount = 0 delete node and increment ptr
 			temp = ptr;
 			ptr = ptr->next;
 			SLDeleteNode(temp); //also decrements next ptr's refCount
 		}	
-	} else { 
-		ptr = ptr->next;
-		ptr->refCount++;
-
 	}
 
-	//how to free temp if while loop isn't called?
+	ptr = ptr->next;
+	ptr->refCount++;
 	iter->current = ptr;
+
+	/** this isn't a void star **/
+	//void* node = iter->current->data
+	//return node
+
 	return iter;
 }
 /* 
