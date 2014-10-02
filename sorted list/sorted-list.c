@@ -131,22 +131,36 @@ int SLRemove(SortedListPtr list, void *newObj) {
 
 	// compare will be -1 when current is smaller, 0 when equal, and 1 when newObj is smaller
 	int compare = list->compareFunc(current->data, newObj);
+	int isHead = ((compare == 0) ? 1 : 0);
 	
 	// iterate through list until we either find a match or newObj is greater than the current
 	while(compare > 0) {
 		prev = current;
 		current = current->next;
+		if(current == NULL)  break;  // reached end of the list
 		compare = list->compareFunc(current->data, newObj);
 	}
 
 	// If we found a matching node remove it from the list (not necessarrily delete it yet)
 	if(compare == 0) {
-		// more than one pointer to node
-		if(current->refCount > 1) {
-			
+		if(isHead) {
+			list->front = current->next;  // next is initalized to null, so no need to check for that
+		}
+
+		/* Past here is a work in progress */
+		
+		prev->next = current->next;
+		current->refCount--;
+		current->next->refCount++;
+
+		// if no more pointers to node, delete it
+		if(current->refCount < 1) {
+			// call function to delete the node
+			SLDeleteNode(current);
+			return 1;
 		}
 	}
-
+	return 0;
 }
 
 
