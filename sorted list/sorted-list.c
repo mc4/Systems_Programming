@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include "sorted-list.h"
 
-static void SLDeleteNode(NodePtr);
+static void SLDeleteNode(NodePtr, DestructFuncT);
 
 /*
  * SLCreate creates a new, empty sorted list.  The caller must provide
@@ -34,7 +34,20 @@ SortedListPtr SLCreate(CompareFuncT cf, DestructFuncT df)
  *
  * You need to fill in this function as part of your implementation.
  */
-void SLDestroy(SortedListPtr list);
+void SLDestroy(SortedListPtr list) {
+	
+	/* anything else to free, besides the node itself and its data? */
+
+	DestructFuncT destroyData = list->destroyFunc;
+	while(list->front != NULL) {
+		NodePtr tmp = list->front;
+		list->front = tmp->next;
+
+		// first free the data inside the node, then the node itself		
+		destroyData( tmp->data );
+		free( tmp );
+	}
+}
 
 
 /*
@@ -121,7 +134,7 @@ int SLInsert(SortedListPtr list, void *newObj)
  */
 
 int SLRemove(SortedListPtr list, void *newObj) {
-	if(list == NULL || newObj == NULL) {
+	if ( list == NULL || newObj == NULL ) {
 		return 0;
 	}
 
@@ -133,31 +146,36 @@ int SLRemove(SortedListPtr list, void *newObj) {
 	int isHead = ((compare == 0) ? 1 : 0);
 	
 	// iterate through list until we either find a match or newObj is greater than the current
-	while(compare > 0) {
+	while ( compare > 0 ) {
 		prev = current;
 		current = current->next;
-		if(current == NULL)  break;  // reached end of the list
-		compare = list->compareFunc(current->data, newObj);
+		if ( current == NULL )  break;  // reached end of the list
+		compare = list->compareFunc( current->data, newObj );
 	}
 
 	// If we found a matching node remove it from the list (not necessarrily delete it yet)
-	if(compare == 0) {
-		if(isHead) {
-			list->front = current->next;  // next is initalized to null, so no need to check for that
+	if ( compare == 0 ) {
+		NodePtr next = current->next;
+		// check if it is the head that matches
+		if ( isHead ) {
+			list->front = next;  // next is initalized to null, so no need to check for that
+		} else {
+			prev->next = next;
 		}
 
-		/* Past here is a work in progress */
+		// if current node not tail, increment the refCount of the next node
+		if ( next != NULL ) {
+			next->refCount++;
+		}
 		
-		prev->next = current->next;
-		current->refCount--;
-		current->next->refCount++;
-
-		// if no more pointers to node, delete it
-		if(current->refCount < 1) {
-			// call function to delete the node
-			SLDeleteNode(current);
-			return 1;
+		// decrement ref count if greater than 1, otherwise fully delete node
+		if ( current->refCount > 1 ) {
+			current->refCount--;
+		} else {
+			SLDeleteNode( current, list->destroyFunc );
 		}
+		list->size--;
+		return 1;
 	}
 	return 0;
 }
@@ -181,6 +199,7 @@ SortedListIteratorPtr SLCreateIterator(SortedListPtr list){
 	SortedListIteratorPtr iter = (SortedListIteratorPtr)malloc(sizeof(SortedListIteratorPtr));
 	iter->current = list->front;
 	iter->current->refCount++;
+	iter->destroyFunc = list->destroyFunc;
 	return iter;
 }
 
@@ -193,7 +212,13 @@ SortedListIteratorPtr SLCreateIterator(SortedListPtr list){
  * You need to fill in this function as part of your implementation.
  */
 
-void SLDestroyIterator(SortedListIteratorPtr iter);
+void SLDestroyIterator(SortedListIteratorPtr iter) {
+	iter->current->refCount--;
+	if ( iter->current->refCount < 1 ) {
+		SLDeleteNode( iter->current, iter->destroyFunc );
+	}
+	free(iter);
+}
 
 
 /*
@@ -242,7 +267,7 @@ void * SLNextItem(SortedListIteratorPtr iter){
 		while(ptr->refCount == 0){
 			temp = ptr;
 			ptr = ptr->next;
-			SLDeleteNode(temp); //also decrements next ptr's refCount
+			SLDeleteNode(temp, iter->destroyFunc); //also decrements next ptr's refCount
 		}	
 	}
 
@@ -259,13 +284,18 @@ void * SLNextItem(SortedListIteratorPtr iter){
 
 /* 
  * Frees space allocated by node, and decrements refCount of next node 
- * Only called when refCount is 0.	
+ * Only called when a node no longer has anything pointing to it.
  */
+<<<<<<< HEAD
  
 static void SLDeleteNode(NodePtr ptr){
+=======
+static void SLDeleteNode(NodePtr ptr, DestructFuncT df){
+>>>>>>> FETCH_HEAD
 	if(ptr->next != NULL){
 		ptr->next->refCount--;
 	}
+	df( ptr->data );
 	free(ptr);
 }
 
