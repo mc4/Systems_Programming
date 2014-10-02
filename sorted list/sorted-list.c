@@ -3,6 +3,7 @@
  */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include "sorted-list.h"
 
 static void SLDeleteNode(NodePtr, DestructFuncT);
@@ -23,8 +24,10 @@ static void printCharList(SortedListPtr);
 
 SortedListPtr SLCreate(CompareFuncT cf, DestructFuncT df)
 {
-	SortedListPtr list = (SortedListPtr)malloc(sizeof(SortedListPtr));
-	//list->front = NULL;
+	if(cf == NULL || df == NULL)  return NULL;
+
+	SortedListPtr list = (SortedListPtr)malloc(sizeof(struct SortedList));
+	list->front = NULL;
 	list->size  = 0;
 	list->compareFunc = cf;
 	list->destroyFunc = df;
@@ -68,7 +71,7 @@ int SLInsert(SortedListPtr list, void *newObj)
 		return 0; 
 	}
 
-	NodePtr temp = (NodePtr)malloc(sizeof(NodePtr));
+	NodePtr temp = (NodePtr)malloc(sizeof(struct Node));
 	temp->data = newObj;
 	temp->next = NULL;
 	temp->refCount = 1;
@@ -195,7 +198,7 @@ int SLRemove(SortedListPtr list, void *newObj) {
 
 SortedListIteratorPtr SLCreateIterator(SortedListPtr list){
 	if(list <= 0) return NULL; 
-	SortedListIteratorPtr iter = (SortedListIteratorPtr)malloc(sizeof(SortedListIteratorPtr));
+	SortedListIteratorPtr iter = (SortedListIteratorPtr)malloc(sizeof(struct SortedListIterator));
 	iter->current = list->front;
 	iter->current->refCount++;
 	iter->destroyFunc = list->destroyFunc;
