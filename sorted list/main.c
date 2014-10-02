@@ -3,7 +3,7 @@
  */
 
 #include	<string.h>
-#include	"sorted-list.h"
+#include	"sorted-list.c"
 
 int compareInts(void *p1, void *p2)
 {
@@ -57,5 +57,6 @@ SLInsert(slpChar, (void*)'z');
 SLInsert(slpChar, (void*)'x');
 
 printIntList(slpInt);
+printCharList(slpChar);
 
 }
