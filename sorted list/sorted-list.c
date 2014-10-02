@@ -273,11 +273,8 @@ void * SLNextItem(SortedListIteratorPtr iter){
 	ptr->refCount++;
 	iter->current = ptr;
 
-	/** this isn't a void star **/
-	//void* node = iter->current->data
-	//return node
-
-	return iter;
+	void* data = iter->current->data;
+	return data;
 }
 
 /* 
