@@ -85,8 +85,20 @@ int main()
 	printIDoubleList(slpDouble);
 
 	printf("-------------------- iterators --------------------\n");
-	SLCreateIterator(slpInt);
 	
+	// create iterator
+	SortedListIteratorPtr intIter = SLCreateIterator(slpInt);
+	
+	int* iterData = (int*)SLGetItem(intIter);
+	printf("%d\n", *iterData);
+
+	for(iterData = (int*)SLNextItem(intIter);iterData != NULL; iterData = (int*)SLNextItem(intIter)) {
+		printf("%d\n", *iterData);
+	}
+	
+	printf("reached end of list\n");
+	
+
 
 	SLDestroy(slpInt);
 	SLDestroy(slpChar);

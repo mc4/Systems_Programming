@@ -249,6 +249,7 @@ void * SLGetItem( SortedListIteratorPtr iter ){
 	ptr->data = iter->current->data;
 	//ptr->next = NULL;
 	//ptr->refCount++;
+	printf("refCount: %d\n", iter->current->refCount);
 	return (void *) ptr->data;
 }
 
@@ -271,11 +272,11 @@ void * SLNextItem(SortedListIteratorPtr iter){
 	if(iter == NULL || iter->current == NULL || iter->current->next == NULL){ 
 		return NULL; 
 	}
-
+	printf("refCount initial : %d\n", iter->current->refCount);
 	NodePtr ptr = (NodePtr)malloc(sizeof(NodePtr)); 
 	ptr = iter->current;
 	ptr->refCount--;
-
+	printf("new refCount: %d\n", iter->current->refCount);
 	if(ptr->refCount == 0){
 		NodePtr temp = (NodePtr)malloc(sizeof(NodePtr));
 		while(ptr->refCount == 0){
