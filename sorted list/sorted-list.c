@@ -10,7 +10,7 @@
 static void SLDeleteNode(NodePtr, DestructFuncT);
 static void printIntList(SortedListPtr);
 static void printCharList(SortedListPtr);
-static void printIDoubleList(SortedListPtr list);
+static void printDoubleList(SortedListPtr list);
 
 /*
  * SLCreate creates a new, empty sorted list.  The caller must provide
@@ -336,7 +336,7 @@ static void printIntList(SortedListPtr list){
 	printf("\n");
 }
 
-static void printIDoubleList(SortedListPtr list){
+static void printDoubleList(SortedListPtr list){
  	NodePtr ptr = (NodePtr)malloc(sizeof(NodePtr));
  	
 	for(ptr = list->front; ptr != NULL; ptr = ptr->next){
