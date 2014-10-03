@@ -10,6 +10,7 @@
 static void SLDeleteNode(NodePtr, DestructFuncT);
 static void printIntList(SortedListPtr);
 static void printCharList(SortedListPtr);
+static void printIDoubleList(SortedListPtr list);
 
 /*
  * SLCreate creates a new, empty sorted list.  The caller must provide
@@ -50,7 +51,7 @@ void SLDestroy(SortedListPtr list) {
 		list->front = tmp->next;
 
 		// first free the data inside the node, then the node itself		
-		destroyData( tmp->data );
+		destroyData( &tmp->data );
 		free( tmp );
 	}
 } 
@@ -66,62 +67,73 @@ void SLDestroy(SortedListPtr list) {
  * You need to fill in this function as part of your implementation.
  */
 
-int SLInsert(SortedListPtr list, void *newObj)
-{
+int SLInsert(SortedListPtr list, void *newObj) {
+	// error, bad input
 	if(list == NULL || newObj == NULL){
 		return 0; 
 	}
 
-	NodePtr temp = (NodePtr)malloc(sizeof(struct Node));
-	temp->data = newObj;
-	temp->next = NULL;
-	temp->refCount = 1;
+	NodePtr newNode = (NodePtr)malloc(sizeof(struct Node));
+	newNode->data = newObj;
+	newNode->next = NULL;
+	newNode->refCount = 1;
 
-	//insert at beginning if list is empty
-	if(list->size == 0){
-		list->front = temp;
+	// no head, new node is head
+	if(list->size == 0) {
+		list->front = newNode;
 		list->size++;
 		return 1;
 	}
+
+	NodePtr current = list->front;
+	NodePtr prev = NULL;
 	
-	//NodePtr prevptr = NULL;
-	NodePtr ptr = list->front;
-	NodePtr nextptr = ptr->next;
+	CompareFuncT cf = list->compareFunc;
+	int compare = cf ( (current->data), newObj );
 
-	//traverses the list to find relevant ptr
-	while(ptr != NULL){
-		// compare will be -1 when ptr is smaller, 0 when equal, and 1 when newObj is smaller
-		int compare = list->compareFunc(ptr->data, newObj);
-		int compareNext = list->compareFunc(ptr->next->data, newObj);
+	// duplicate insertion
+	if( compare == 0 ) {
+		free(newNode);
+		return 0;
+	}
 
-		// duplicate insertion is an error
-		if(compare == 0){
-			//display error message?
-			free(temp);
+	// add before head
+	if( compare < 0 ) {
+		newNode->next = list->front;
+		list->front = newNode;
+		list->size++;
+		return 1;
+	}
+
+	while(1) {
+		prev = current;
+		current = current->next;
+
+		// add to tail
+		if(current == NULL) {
+			prev->next = newNode;
+			list->size++;
+			return 1;
+		}
+		
+		compare = cf ( (current->data), newObj );
+
+		// duplicate insertion
+		if( compare == 0 ) {
+			free(newNode);
 			return 0;
 		}
 
-		// insert at the end of the list
-		if(compare == 1 && ptr->next == NULL){
-			ptr->next = temp;
+		// add to middle, before current
+		if( compare < 0 ) {
+			newNode->next = current;
+			prev->next = newNode;
 			list->size++;
 			return 1;
 		}
-
-		// insert in the middle
-		if(compare == 1 && compareNext == -1){
-			temp->next = ptr->next;
-			ptr->next = temp;
-			list->size++;
-			return 1;
-		}
-
-		//prevptr = ptr;
-		ptr = ptr->next;
-		nextptr = ptr->next; 
 	}
-	//failure
-	free(temp);
+	// shouldn't happen
+	free(newNode);
 	return 0;
 }
 
@@ -146,7 +158,7 @@ int SLRemove(SortedListPtr list, void *newObj) {
 	NodePtr prev = NULL;
 
 	// compare will be -1 when current is smaller, 0 when equal, and 1 when newObj is smaller
-	int compare = list->compareFunc(current->data, newObj);
+	int compare = list->compareFunc(&current->data, newObj);
 	int isHead = ((compare == 0) ? 1 : 0);
 	
 	// iterate through list until we either find a match or newObj is greater than the current
@@ -154,7 +166,7 @@ int SLRemove(SortedListPtr list, void *newObj) {
 		prev = current;
 		current = current->next;
 		if ( current == NULL )  break;  // reached end of the list
-		compare = list->compareFunc( current->data, newObj );
+		compare = list->compareFunc( &current->data, newObj );
 	}
 
 	// If we found a matching node remove it from the list (not necessarrily delete it yet)
@@ -290,7 +302,7 @@ static void SLDeleteNode(NodePtr ptr, DestructFuncT df){
 	if(ptr->next != NULL){
 		ptr->next->refCount--;
 	}
-	df( ptr->data );
+	df( &ptr->data );
 	free(ptr);
 }
 
@@ -303,11 +315,21 @@ static void printIntList(SortedListPtr list){
 	printf("\n");
 }
 
+static void printIDoubleList(SortedListPtr list){
+ 	NodePtr ptr = (NodePtr)malloc(sizeof(NodePtr));
+ 	
+	for(ptr = list->front; ptr != NULL; ptr = ptr->next){
+		printf("%f->", *(double*)ptr->data);
+	}
+	printf("\n");
+}
+
 static void printCharList(SortedListPtr list){
  	NodePtr ptr = (NodePtr)malloc(sizeof(NodePtr));
 	 
 	for(ptr = list->front; ptr != NULL; ptr = ptr->next){
-		printf("%d->", *(char*)ptr->data);
+		printf("%c->", *(char*)ptr->data);
 	}
 		printf("\n");
 }
+
