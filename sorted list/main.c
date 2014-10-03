@@ -46,51 +46,72 @@ int main()
 {
 
 	SortedListPtr slpInt = SLCreate(compareInts, destroyBasicTypeNoAlloc);
-	SortedListPtr slpChar = SLCreate(compareStrings, destroyBasicTypeNoAlloc);
-	SortedListPtr slpDouble = SLCreate(compareDoubles, destroyBasicTypeNoAlloc);
+	//SortedListPtr slpChar = SLCreate(compareStrings, destroyBasicTypeNoAlloc);
+	//SortedListPtr slpDouble = SLCreate(compareDoubles, destroyBasicTypeNoAlloc);
 
-	int x, *p, *v;
-	p = malloc(sizeof(int));
-	// SortedListPtr sl = SLCreate(compareInts);
-	// SortedListIteratorPtr si;
+	// int x, *p, *v;
+	// p = malloc(sizeof(int));
+	// // SortedListPtr sl = SLCreate(compareInts);
+	// // SortedListIteratorPtr si;
     
-	while(scanf("%d",&x)==1) {
-		v = malloc(sizeof(int));
-		*v = x;
-		printf("address: %d\n", *(int*)&v);
-		SLInsert(slpInt,v);
-	}
+	// while(scanf("%d",&x)==1) {
+	// 	v = malloc(sizeof(int));
+	// 	*v = x;
+	// 	printf("address: %d\n", *(int*)&v);
+	// 	SLInsert(slpInt,v);
+	// }
 
-	char s1[] = "test";
-	char s2[] = "zoro";
-	SLInsert(slpChar, (void*)&s1);
-	SLInsert(slpChar, (void*)&s2);
-	SLInsert(slpChar, (void*)"qwerty");
-	SLInsert(slpChar, (void*)"alphabet");
-	SLInsert(slpChar, (void*)"peanut butter");
+	//100, 45, 50, 76, 90, 99, 56
+	int *a = 100;
+	int *b = 45;
+	int *c = 50;
+	int *d = 76;
+	int *e = 90;
+	int *f = 99;
+	int *g = 56;
+	int test;
 
-	double dub = 1.2;
-	double dub2 = 22.1234234234;
-	double dub3 = 0.1;
-	double dub4 = 12;
-	SLInsert(slpDouble, (void*)&dub);
-	SLInsert(slpDouble, (void*)&dub2);
-	SLInsert(slpDouble, (void*)&dub3);
-	SLInsert(slpDouble, (void*)&dub4);
+	SLInsert(slpInt, (void*)&a);
+	SLInsert(slpInt, (void*)&b);
+	SLInsert(slpInt, (void*)&c);
+	test = SLRemove(slpInt, (void*)&a);
+	SLInsert(slpInt, (void*)&d);
+	SLInsert(slpInt, (void*)&e);
+	SLInsert(slpInt, (void*)&f);
+	SLInsert(slpInt, (void*)&g);
 
-	// // printf("%d\n", strcmp("zoro", "qwerty"));
+	printf("%d\n", test);
+
+	// char s1[] = "test";
+	// char s2[] = "zoro";
+	// SLInsert(slpChar, (void*)&s1);
+	// SLInsert(slpChar, (void*)&s2);
+	// SLInsert(slpChar, (void*)"qwerty");
+	// SLInsert(slpChar, (void*)"alphabet");
+	// SLInsert(slpChar, (void*)"peanut butter");
+
+	// double dub = 1.2;
+	// double dub2 = 22.1234234234;
+	// double dub3 = 0.1;
+	// double dub4 = 12;
+	// SLInsert(slpDouble, (void*)&dub);
+	// SLInsert(slpDouble, (void*)&dub2);
+	// SLInsert(slpDouble, (void*)&dub3);
+	// SLInsert(slpDouble, (void*)&dub4);
+
+	// printf("%d\n", strcmp("zoro", "qwerty"));
 
 	printIntList(slpInt);
-	printCharList(slpChar);
-	printIDoubleList(slpDouble);
+	// printCharList(slpChar);
+	// printIDoubleList(slpDouble);
 
-	printf("-------------------- iterators --------------------\n");
-	SLCreateIterator(slpInt);
+	// printf("-------------------- iterators --------------------\n");
+	// SLCreateIterator(slpInt);
 	
 
 	SLDestroy(slpInt);
-	SLDestroy(slpChar);
-	SLDestroy(slpDouble);
+	// SLDestroy(slpChar);
+	// SLDestroy(slpDouble);
 
 	// testHelper(compareInts, destroyBasicTypeNoAlloc);
 

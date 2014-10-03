@@ -4,10 +4,10 @@ Mark Conley && Michael Newman
 
 Test Case 1: Compare Ints
 
-	Insert: 9, 1, 5, 4, 3
+	Insert: 100, 45 50, 76, 90, 99, 56
 
-	Expected: 9, 5, 4, 3, 1
-	Result: 9, 5, 4, 3, 1
+	Expected: 100, 99, 90, 76, 56, 50, 45
+	Result: 100, 99, 90, 76, 56, 50, 45
 
 Test Case 2: Compare Doubles
 
@@ -30,12 +30,12 @@ Test Case 4: Compare Chars
 	Expected: z, y, x, w, d, c, b, a
 	Result: z, y, x, w, d, c, b, a
 
-Test Case 5: Compare Ints
+Test Case 5: Compare Ints (remove 100 and 45 after inserting 56)
 
-	Insert: 100, 45, 67, 50, 76, 90, 99, 56
+	Insert: 100, 45 50, 76, 90, 99, 56
 	Remove: 100, 45
 
-	Expected: 99, 90, 76, 67, 56, 50
+	Expected: 99, 90, 76, 56, 50
 	Result:
 
 Test Case 6: Compare Char - Remove while iterating (remove while iterator is on x and c)
@@ -52,7 +52,7 @@ Test Case 7: Compare Int - Remove object while iter is pointing to it (remove ca
 	Remove: 4
 
 	Expected: 9, 5, 3, 1
-	Result: 9, 5, 3, 1
+	Result: 9, 5, 3, 1 
 
 Test Case 8: Compare Ints
 
