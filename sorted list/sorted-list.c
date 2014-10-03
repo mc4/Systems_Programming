@@ -45,13 +45,13 @@ void SLDestroy(SortedListPtr list) {
 	
 	/* anything else to free, besides the node itself and its data? */
 
-	DestructFuncT destroyData = list->destroyFunc;
+	DestructFuncT df = list->destroyFunc;
 	while(list->front != NULL) {
 		NodePtr tmp = list->front;
 		list->front = tmp->next;
 
 		// first free the data inside the node, then the node itself		
-		destroyData( &tmp->data );
+		df( tmp->data );
 		free( tmp );
 	}
 } 
@@ -158,7 +158,7 @@ int SLRemove(SortedListPtr list, void *newObj) {
 	NodePtr prev = NULL;
 
 	// compare will be -1 when current is smaller, 0 when equal, and 1 when newObj is smaller
-	int compare = list->compareFunc(&current->data, newObj);
+	int compare = list->compareFunc( (current->data), newObj);
 	int isHead = ((compare == 0) ? 1 : 0);
 	
 	// iterate through list until we either find a match or newObj is greater than the current
@@ -166,7 +166,7 @@ int SLRemove(SortedListPtr list, void *newObj) {
 		prev = current;
 		current = current->next;
 		if ( current == NULL )  break;  // reached end of the list
-		compare = list->compareFunc( &current->data, newObj );
+		compare = list->compareFunc( (current->data), newObj );
 	}
 
 	// If we found a matching node remove it from the list (not necessarrily delete it yet)
@@ -302,7 +302,7 @@ static void SLDeleteNode(NodePtr ptr, DestructFuncT df){
 	if(ptr->next != NULL){
 		ptr->next->refCount--;
 	}
-	df( &ptr->data );
+	df( ptr->data );
 	free(ptr);
 }
 
@@ -332,4 +332,3 @@ static void printCharList(SortedListPtr list){
 	}
 		printf("\n");
 }
-

@@ -93,4 +93,6 @@ int main()
 	SLDestroy(slpDouble);
 
 	// testHelper(compareInts, destroyBasicTypeNoAlloc);
+
+return 0;
 }
