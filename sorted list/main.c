@@ -42,6 +42,20 @@ void destroyBasicTypeNoAlloc(void *p) {
 	return;
 }
 
+void printListFromIterator(SortedListPtr slpInt) {
+	// create iterator
+	SortedListIteratorPtr intIter = SLCreateIterator(slpInt);
+	
+	int* iterData = (int*)SLGetItem(intIter);
+	printf("%d -> ", *iterData);
+
+	for(iterData = (int*)SLNextItem(intIter);iterData != NULL; iterData = (int*)SLNextItem(intIter)) {
+		printf("%d -> ", *iterData);
+	}
+	printf("\n\n");
+	SLDestroyIterator(intIter);
+}
+
 int main()
 {
 
@@ -62,19 +76,26 @@ int main()
 	// }
 
 	//100, 45, 50, 76, 90, 99, 56
-	int *a = 100;
-	int *b = 45;
-	int *c = 50;
-	int *d = 76;
-	int *e = 90;
-	int *f = 99;
-	int *g = 56;
+	// int a = 100;
+	// int b = 45;
+	// int c = 50;
+	// int d = 76;
+	// int e = 90;
+	// int f = 99;
+	// int g = 56;
+	int a = 1;
+	int b = 2;
+	int c = 3;
+	int d = 4;
+	int e = 5;
+	int f = 6;
+	int g = 7;
 	int test;
 
 	SLInsert(slpInt, (void*)&a);
 	SLInsert(slpInt, (void*)&b);
 	SLInsert(slpInt, (void*)&c);
-	test = SLRemove(slpInt, (void*)&a);
+	// test = SLRemove(slpInt, (void*)&a);
 	SLInsert(slpInt, (void*)&d);
 	SLInsert(slpInt, (void*)&e);
 	SLInsert(slpInt, (void*)&f);
@@ -105,19 +126,49 @@ int main()
 	// printCharList(slpChar);
 	// printIDoubleList(slpDouble);
 
-	printf("-------------------- iterators --------------------\n");
+	printf("\n-------------------- iterators --------------------\n\n");
+	
+	printf("Initial list\n");
+	printListFromIterator(slpInt);
 	
 	// create iterator
-	SortedListIteratorPtr intIter = SLCreateIterator(slpInt);
+	SortedListIteratorPtr intIter1 = SLCreateIterator(slpInt);
+	printListFromIterator(slpInt);
 	
-	int* iterData = (int*)SLGetItem(intIter);
-	printf("%d\n", *iterData);
+	int* iterData = (int*)SLGetItem(intIter1);
+	printf(" Current ptr data:%d\n", *iterData);
+	printListFromIterator(slpInt);
 
-	for(iterData = (int*)SLNextItem(intIter);iterData != NULL; iterData = (int*)SLNextItem(intIter)) {
-		printf("%d\n", *iterData);
+	int x;
+	while(scanf("%d",&x)==1) {
+		// iterate to next node
+		if(x == 1) {
+			iterData = (int*)SLNextItem(intIter1);
+			if(iterData != NULL) {
+				printf("Current ptr data:%d\n", *iterData);
+			}
+			else printf("eror, end of list\n");
+			printListFromIterator(slpInt);
+		}
+
+		// delete current node
+		else if(x == 2) {
+			printf("Removing current ptr data:%d\n", *iterData);
+			int remove = SLRemove(slpInt, iterData);
+			if(!remove) printf("error: failed to remove\n");
+			printListFromIterator(slpInt);	
+			printf("current node: %d\n", *(int*)SLGetItem(intIter1));
+		}
+
+		else if(x == 3) {
+			int* iterData = (int*)SLGetItem(intIter1);
+			printf(" Current ptr data:%d\n", *iterData);
+			printListFromIterator(slpInt);
+		}
 	}
+
 	
-	printf("reached end of list\n");
+	printListFromIterator(slpInt);
 	
 
 

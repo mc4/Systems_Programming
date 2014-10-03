@@ -212,8 +212,11 @@ int SLRemove(SortedListPtr list, void *newObj) {
 SortedListIteratorPtr SLCreateIterator(SortedListPtr list){
 	if(list <= 0) return NULL; 
 	SortedListIteratorPtr iter = (SortedListIteratorPtr)malloc(sizeof(struct SortedListIterator));
+	// printf("head data: %d\n", *(int*)list->front->data);
+	// printf("initial refCount: %d\n", list->front->refCount);
 	iter->current = list->front;
 	iter->current->refCount++;
+	// printf("incremented refCount: %d\n", list->front->refCount);
 	iter->destroyFunc = list->destroyFunc;
 	return iter;
 }
@@ -244,13 +247,16 @@ void SLDestroyIterator(SortedListIteratorPtr iter) {
 */
 
 void * SLGetItem( SortedListIteratorPtr iter ){
-	NodePtr ptr = (NodePtr)malloc(sizeof(NodePtr));
-	ptr = iter->current;
-	ptr->data = iter->current->data;
-	//ptr->next = NULL;
-	//ptr->refCount++;
-	printf("refCount: %d\n", iter->current->refCount);
-	return (void *) ptr->data;
+	// to malloc or not to malloc, that is the question
+	// NodePtr ptr = (NodePtr)malloc(sizeof(NodePtr));
+	// ptr = iter->current;
+	// ptr->data = iter->current->data;
+	// //ptr->next = NULL;
+	// //ptr->refCount++;
+	if(iter->current == NULL)  return 0;
+	printf(" (rc: %d)", iter->current->refCount);
+	return iter->current->data;
+	// return (void *) ptr->data;
 }
 
 /*
@@ -272,26 +278,40 @@ void * SLNextItem(SortedListIteratorPtr iter){
 	if(iter == NULL || iter->current == NULL || iter->current->next == NULL){ 
 		return NULL; 
 	}
-	printf("refCount initial : %d\n", iter->current->refCount);
-	NodePtr ptr = (NodePtr)malloc(sizeof(NodePtr)); 
+
+	// printf("refCount initial : %d\n", iter->current->refCount);
+	
+	// NodePtr ptr = (NodePtr)malloc(sizeof(NodePtr)); 
+	NodePtr ptr;
 	ptr = iter->current;
 	ptr->refCount--;
-	printf("new refCount: %d\n", iter->current->refCount);
+	
+	NodePtr toDelete = NULL;
+
 	if(ptr->refCount == 0){
-		NodePtr temp = (NodePtr)malloc(sizeof(NodePtr));
-		while(ptr->refCount == 0){
-			temp = ptr;
-			ptr = ptr->next;
-			SLDeleteNode(temp, iter->destroyFunc); //also decrements next ptr's refCount
-		}	
+		// NodePtr temp = (NodePtr)malloc(sizeof(NodePtr));
+		// while(ptr->refCount == 0){
+		// 	temp = ptr;
+		// 	ptr = ptr->next;
+		// 	SLDeleteNode(temp, iter->destroyFunc); //also decrements next ptr's refCount
+		// }
+		toDelete = ptr;
+		printf("deleting a node\n");
 	}
 
+	printf(" (rc: %d)", ptr->next->refCount);
 	ptr = ptr->next;
 	ptr->refCount++;
 	iter->current = ptr;
 
-	void* data = iter->current->data;
-	return data;
+	if(toDelete != NULL) {
+		SLDeleteNode(toDelete, iter->destroyFunc);
+	}
+
+	return iter->current->data;
+
+	// void* data = iter->current->data;
+	// return data;
 }
 
 /* 
