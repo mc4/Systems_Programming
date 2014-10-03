@@ -1,5 +1,6 @@
 Systems Programming 
 Assignment 2: Sorted List
+Test plan
 Mark Conley && Michael Newman
 
 Test Case 1: Compare Ints
@@ -36,7 +37,15 @@ Test Case 5: Compare Ints (remove 100 and 45 after inserting 56)
 	Remove: 100, 45
 
 	Expected: 99, 90, 76, 56, 50
+	Result: 99, 90, 76, 56, 50
+
+Test Case 8: Compare Ints (remove 100 after 50)
+
+	Insert: ...
+
+	Expected:
 	Result:
+
 
 Test Case 6: Compare Char - Remove while iterating (remove while iterator is on x and c)
 

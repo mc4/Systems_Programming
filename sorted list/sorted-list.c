@@ -10,7 +10,7 @@
 static void SLDeleteNode(NodePtr, DestructFuncT);
 static void printIntList(SortedListPtr);
 static void printCharList(SortedListPtr);
-static void printIDoubleList(SortedListPtr list);
+static void printDoubleList(SortedListPtr list);
 
 /*
  * SLCreate creates a new, empty sorted list.  The caller must provide
@@ -249,7 +249,7 @@ void * SLGetItem( SortedListIteratorPtr iter ){
 	ptr->data = iter->current->data;
 	//ptr->next = NULL;
 	//ptr->refCount++;
-	printf("refCount: %d\n", iter->current->refCount);
+	//printf("refCount: %d\n", iter->current->refCount);
 	return (void *) ptr->data;
 }
 
@@ -272,11 +272,11 @@ void * SLNextItem(SortedListIteratorPtr iter){
 	if(iter == NULL || iter->current == NULL || iter->current->next == NULL){ 
 		return NULL; 
 	}
-	printf("refCount initial : %d\n", iter->current->refCount);
+	//printf("refCount initial : %d\n", iter->current->refCount);
 	NodePtr ptr = (NodePtr)malloc(sizeof(NodePtr)); 
 	ptr = iter->current;
 	ptr->refCount--;
-	printf("new refCount: %d\n", iter->current->refCount);
+	//printf("new refCount: %d\n", iter->current->refCount);
 	if(ptr->refCount == 0){
 		NodePtr temp = (NodePtr)malloc(sizeof(NodePtr));
 		while(ptr->refCount == 0){
@@ -316,7 +316,7 @@ static void printIntList(SortedListPtr list){
 	printf("\n");
 }
 
-static void printIDoubleList(SortedListPtr list){
+static void printDoubleList(SortedListPtr list){
  	NodePtr ptr = (NodePtr)malloc(sizeof(NodePtr));
  	
 	for(ptr = list->front; ptr != NULL; ptr = ptr->next){

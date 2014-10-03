@@ -42,6 +42,7 @@ void destroyBasicTypeNoAlloc(void *p) {
 	return;
 }
 
+/*
 int main()
 {
 
@@ -69,18 +70,15 @@ int main()
 	int *e = 90;
 	int *f = 99;
 	int *g = 56;
-	int test;
+	int *h = 100;
 
 	SLInsert(slpInt, (void*)&a);
 	SLInsert(slpInt, (void*)&b);
 	SLInsert(slpInt, (void*)&c);
-	test = SLRemove(slpInt, (void*)&a);
 	SLInsert(slpInt, (void*)&d);
 	SLInsert(slpInt, (void*)&e);
-	SLInsert(slpInt, (void*)&f);
-	SLInsert(slpInt, (void*)&g);
-
-	printf("%d\n", test);
+	//SLInsert(slpInt, (void*)&f);
+	//SLInsert(slpInt, (void*)&g);
 
 	// char s1[] = "test";
 	// char s2[] = "zoro";
@@ -104,22 +102,36 @@ int main()
 	printIntList(slpInt);
 	// printCharList(slpChar);
 	// printIDoubleList(slpDouble);
-
+	
 	printf("-------------------- iterators --------------------\n");
 	
 	// create iterator
 	SortedListIteratorPtr intIter = SLCreateIterator(slpInt);
+	intIter->compareFunc = compareInts;
+	CompareFuncT cf = intIter->compareFunc;
+	int compare;
+
+	compare = cf( (void*)&a, (void*)&d);
+	printf("compare test: %d\n", compare);	
 	
 	int* iterData = (int*)SLGetItem(intIter);
-	printf("%d\n", *iterData);
+	printf("iterData: %d\n", *iterData);
 
-	for(iterData = (int*)SLNextItem(intIter);iterData != NULL; iterData = (int*)SLNextItem(intIter)) {
-		printf("%d\n", *iterData);
+	//ONLY WORKS WHEN LIST SIZE EQUALS 5
+	int i;
+	for(i = 0; i < 4; i++){
+	iterData = (int*)SLNextItem(intIter);
+		printf("iterData: %d\n", *iterData);
+
 	}
-	
-	printf("reached end of list\n");
-	
 
+	// for(iterData = (int*)SLNextItem(intIter);
+	// 	iterData != NULL; 
+	// 	iterData = (int*)SLNextItem(intIter)) {
+	// 	printf("%d\n", *iterData);
+	// }
+
+	printf("reached end of list\n");
 
 	SLDestroy(slpInt);
 	// SLDestroy(slpChar);
@@ -129,3 +141,4 @@ int main()
 
 return 0;
 }
+*/
