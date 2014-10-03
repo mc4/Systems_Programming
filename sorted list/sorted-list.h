@@ -11,7 +11,7 @@ struct Node {
 	void* data;
 	NodePtr next;
 	int refCount;		//interator count
-} ;
+};
 
 /*
  * When your sorted list is used to store objects of some type, since the

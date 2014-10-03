@@ -45,18 +45,7 @@ void destroyBasicTypeNoAlloc(void *p) {
 int main()
 {
 
-SortedListPtr slpInt = (SortedListPtr)malloc(sizeof(SortedListPtr));
-SortedListPtr slpChar = (SortedListPtr)malloc(sizeof(SortedListPtr));
 
-SLInsert(slpInt, (void*)8);
-SLInsert(slpInt, (void*)9);
-SLInsert(slpInt, (void*)100);
 
-SLInsert(slpChar, (void*)'a');
-SLInsert(slpChar, (void*)'z');
-SLInsert(slpChar, (void*)'x');
-
-printIntList(slpInt);
-printCharList(slpChar);
-
+return 0;
 }

@@ -68,61 +68,7 @@ void SLDestroy(SortedListPtr list) {
 
 int SLInsert(SortedListPtr list, void *newObj)
 {
-	if(list == NULL || newObj == NULL){
-		return 0; 
-	}
 
-	NodePtr temp = (NodePtr)malloc(sizeof(struct Node));
-	temp->data = newObj;
-	temp->next = NULL;
-	temp->refCount = 1;
-
-	//insert at beginning if list is empty
-	if(list->size == 0){
-		list->front = temp;
-		list->size++;
-		return 1;
-	}
-	
-	//NodePtr prevptr = NULL;
-	NodePtr ptr = list->front;
-	NodePtr nextptr = ptr->next;
-
-	//traverses the list to find relevant ptr
-	while(ptr != NULL){
-		// compare will be -1 when ptr is smaller, 0 when equal, and 1 when newObj is smaller
-		int compare = list->compareFunc(ptr->data, newObj);
-		int compareNext = list->compareFunc(ptr->next->data, newObj);
-
-		// duplicate insertion is an error
-		if(compare == 0){
-			//display error message?
-			free(temp);
-			return 0;
-		}
-
-		// insert at the end of the list
-		if(compare == 1 && ptr->next == NULL){
-			ptr->next = temp;
-			list->size++;
-			return 1;
-		}
-
-		// insert in the middle
-		if(compare == 1 && compareNext == -1){
-			temp->next = ptr->next;
-			ptr->next = temp;
-			list->size++;
-			return 1;
-		}
-
-		//prevptr = ptr;
-		ptr = ptr->next;
-		nextptr = ptr->next; 
-	}
-	//failure
-	free(temp);
-	return 0;
 }
 
 /*
@@ -301,6 +247,8 @@ static void printIntList(SortedListPtr list){
 		printf("%d->", *(int*)ptr->data);
 	}
 	printf("\n");
+	free(ptr);
+	return;
 }
 
 static void printCharList(SortedListPtr list){
@@ -309,5 +257,7 @@ static void printCharList(SortedListPtr list){
 	for(ptr = list->front; ptr != NULL; ptr = ptr->next){
 		printf("%d->", *(char*)ptr->data);
 	}
-		printf("\n");
+	printf("\n");
+	free(ptr);
+	return;
 }
