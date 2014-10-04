@@ -1,6 +1,6 @@
 Systems Programming 
 Assignment 2: Sorted List
-Test
+Test Plan
 Mark Conley && Michael Newman
 
 Test Case 1: Compare Ints
