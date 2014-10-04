@@ -210,7 +210,7 @@ int SLRemove(SortedListPtr list, void *newObj) {
  */
 
 SortedListIteratorPtr SLCreateIterator(SortedListPtr list){
-	if(list <= 0) return NULL; 
+	if(list->size <= 0 || NULL) return NULL; 
 	SortedListIteratorPtr iter = (SortedListIteratorPtr)malloc(sizeof(struct SortedListIterator));
 	// printf("head data: %d\n", *(int*)list->front->data);
 	// printf("initial refCount: %d\n", list->front->refCount);
@@ -254,7 +254,7 @@ void * SLGetItem( SortedListIteratorPtr iter ){
 	// //ptr->next = NULL;
 	// //ptr->refCount++;
 	if(iter->current == NULL)  return 0;
-	printf(" (rc: %d)", iter->current->refCount);
+	//printf(" (rc: %d)", iter->current->refCount);
 	return iter->current->data;
 	// return (void *) ptr->data;
 }
@@ -299,7 +299,7 @@ void * SLNextItem(SortedListIteratorPtr iter){
 		printf("deleting a node\n");
 	}
 
-	printf(" (rc: %d)", ptr->next->refCount);
+	//printf(" (rc: %d)", ptr->next->refCount);
 	ptr = ptr->next;
 	ptr->refCount++;
 	iter->current = ptr;
@@ -333,6 +333,7 @@ static void printIntList(SortedListPtr list){
 	for(ptr = list->front; ptr != NULL; ptr = ptr->next){
 		printf("%d->", *(int*)ptr->data);
 	}
+	free(ptr);
 	printf("\n");
 }
 
