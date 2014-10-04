@@ -26,13 +26,16 @@ static void printDoubleList(SortedListPtr list);
 
 SortedListPtr SLCreate(CompareFuncT cf, DestructFuncT df)
 {
-	if(cf == NULL || df == NULL)  return NULL;
+	if(cf == NULL || df == NULL) {
+		return NULL;
+	}
 
 	SortedListPtr list = (SortedListPtr)malloc(sizeof(struct SortedList));
 	list->front = NULL;
 	list->size  = 0;
 	list->compareFunc = cf;
 	list->destroyFunc = df;
+	
 	return list;
 }
 
@@ -42,18 +45,20 @@ SortedListPtr SLCreate(CompareFuncT cf, DestructFuncT df)
  * You need to fill in this function as part of your implementation.
  */
 void SLDestroy(SortedListPtr list) {
-	
-	/* anything else to free, besides the node itself and its data? */
-
 	DestructFuncT df = list->destroyFunc;
+
+	// keep freeing front, till empty
 	while(list->front != NULL) {
 		NodePtr tmp = list->front;
 		list->front = tmp->next;
 
-		// first free the data inside the node, then the node itself		
-		df( tmp->data );
+		// first free data inside node if not null, then node itself
+		if(tmp->data != NULL) {
+			df( tmp->data );
+		}
 		free( tmp );
 	}
+	free(list);
 } 
 
 /*
@@ -150,7 +155,7 @@ int SLInsert(SortedListPtr list, void *newObj) {
  */
 
 int SLRemove(SortedListPtr list, void *newObj) {
-	if ( list == NULL || newObj == NULL ) {
+	if ( list == NULL || newObj == NULL || list->front == NULL) {
 		return 0;
 	}
 
@@ -161,7 +166,7 @@ int SLRemove(SortedListPtr list, void *newObj) {
 	int compare = list->compareFunc( (current->data), newObj);
 	int isHead = ((compare == 0) ? 1 : 0);
 	
-	// iterate through list until we either find a match or newObj is greater than the current
+	// iterate through list stop if match or newObj > current
 	while ( compare > 0 ) {
 		prev = current;
 		current = current->next;
@@ -169,9 +174,10 @@ int SLRemove(SortedListPtr list, void *newObj) {
 		compare = list->compareFunc( (current->data), newObj );
 	}
 
-	// If we found a matching node remove it from the list (not necessarrily delete it yet)
+	// If found matching node remove from list (not necessarrily delete it yet)
 	if ( compare == 0 ) {
 		NodePtr next = current->next;
+
 		// check if it is the head that matches
 		if ( isHead ) {
 			list->front = next;  // next is initalized to null, so no need to check for that
@@ -190,6 +196,8 @@ int SLRemove(SortedListPtr list, void *newObj) {
 		} else {
 			SLDeleteNode( current, list->destroyFunc );
 		}
+
+		// decrement size of list and return
 		list->size--;
 		return 1;
 	}
@@ -210,14 +218,15 @@ int SLRemove(SortedListPtr list, void *newObj) {
  */
 
 SortedListIteratorPtr SLCreateIterator(SortedListPtr list){
-	if(list->size <= 0 || NULL) return NULL; 
+	if(list == NULL || list->size <= 0) {
+		return NULL; 
+	}
 	SortedListIteratorPtr iter = (SortedListIteratorPtr)malloc(sizeof(struct SortedListIterator));
-	// printf("head data: %d\n", *(int*)list->front->data);
-	// printf("initial refCount: %d\n", list->front->refCount);
+	
 	iter->current = list->front;
 	iter->current->refCount++;
-	// printf("incremented refCount: %d\n", list->front->refCount);
 	iter->destroyFunc = list->destroyFunc;
+	
 	return iter;
 }
 
@@ -231,8 +240,10 @@ SortedListIteratorPtr SLCreateIterator(SortedListPtr list){
  */
 
 void SLDestroyIterator(SortedListIteratorPtr iter) {
-	if(iter == NULL)  return;
-	if(it->current != NULL) {
+	if(iter == NULL)  {
+		return;
+	}
+	if(iter->current != NULL) {
 		iter->current->refCount--;
 		if ( iter->current->refCount < 1 ) {
 			SLDeleteNode( iter->current, iter->destroyFunc );
@@ -250,16 +261,10 @@ void SLDestroyIterator(SortedListIteratorPtr iter) {
 */
 
 void * SLGetItem( SortedListIteratorPtr iter ){
-	// to malloc or not to malloc, that is the question
-	// NodePtr ptr = (NodePtr)malloc(sizeof(NodePtr));
-	// ptr = iter->current;
-	// ptr->data = iter->current->data;
-	// //ptr->next = NULL;
-	// //ptr->refCount++;
-	if(iter->current == NULL || iter == NULL)  return 0;
-	//printf(" (rc: %d)", iter->current->refCount);
+	if( iter == NULL || iter->current == NULL ) {
+		return 0;
+	}
 	return iter->current->data;
-	// return (void *) ptr->data;
 }
 
 /*
@@ -282,27 +287,18 @@ void * SLNextItem(SortedListIteratorPtr iter){
 		return NULL; 
 	}
 
-	// printf("refCount initial : %d\n", iter->current->refCount);
-	
-	// NodePtr ptr = (NodePtr)malloc(sizeof(NodePtr)); 
 	NodePtr ptr;
 	ptr = iter->current;
 	ptr->refCount--;
 	
 	NodePtr toDelete = NULL;
 
+	// if the refCount of the node goes to zero, mark it to be deleted
 	if(ptr->refCount == 0){
-		// NodePtr temp = (NodePtr)malloc(sizeof(NodePtr));
-		// while(ptr->refCount == 0){
-		// 	temp = ptr;
-		// 	ptr = ptr->next;
-		// 	SLDeleteNode(temp, iter->destroyFunc); //also decrements next ptr's refCount
-		// }
 		toDelete = ptr;
-		printf("deleting a node\n");
 	}
 
-	//printf(" (rc: %d)", ptr->next->refCount);
+	// increment pointer to nect node, increase ref count
 	ptr = ptr->next;
 	ptr->refCount++;
 	iter->current = ptr;
@@ -312,9 +308,6 @@ void * SLNextItem(SortedListIteratorPtr iter){
 	}
 
 	return iter->current->data;
-
-	// void* data = iter->current->data;
-	// return data;
 }
 
 /* 
@@ -323,6 +316,9 @@ void * SLNextItem(SortedListIteratorPtr iter){
  */
 
 static void SLDeleteNode(NodePtr ptr, DestructFuncT df){
+	if(ptr == NULL) {
+		return;
+	}
 	if(ptr->next != NULL){
 		ptr->next->refCount--;
 	}
@@ -330,18 +326,27 @@ static void SLDeleteNode(NodePtr ptr, DestructFuncT df){
 	free(ptr);
 }
 
+// Helper function to print out an int list without having to use iterators
 static void printIntList(SortedListPtr list){
- 	NodePtr ptr = (NodePtr)malloc(sizeof(NodePtr));
+ 	if(list == NULL) {
+		return;
+	}
+	
+ 	NodePtr ptr = NULL;
  	
 	for(ptr = list->front; ptr != NULL; ptr = ptr->next){
 		printf("%d->", *(int*)ptr->data);
 	}
-	free(ptr);
 	printf("\n");
 }
 
+// Helper function to print out a double list without having to use iterators
 static void printDoubleList(SortedListPtr list){
- 	NodePtr ptr = (NodePtr)malloc(sizeof(NodePtr));
+ 	if(list == NULL) {
+		return;
+	}
+
+ 	NodePtr ptr = NULL;
  	
 	for(ptr = list->front; ptr != NULL; ptr = ptr->next){
 		printf("%f->", *(double*)ptr->data);
@@ -349,11 +354,16 @@ static void printDoubleList(SortedListPtr list){
 	printf("\n");
 }
 
+// Helper function to print out a char list without having to use iterators
 static void printCharList(SortedListPtr list){
- 	NodePtr ptr = (NodePtr)malloc(sizeof(NodePtr));
+ 	if(list == NULL) {
+		return;
+	}
+
+ 	NodePtr ptr = NULL;
 	 
 	for(ptr = list->front; ptr != NULL; ptr = ptr->next){
 		printf("%c->", *(char*)ptr->data);
 	}
-		printf("\n");
+	printf("\n");
 }
