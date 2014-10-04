@@ -231,10 +231,13 @@ SortedListIteratorPtr SLCreateIterator(SortedListPtr list){
  */
 
 void SLDestroyIterator(SortedListIteratorPtr iter) {
-	iter->current->refCount--;
-	if ( iter->current->refCount < 1 ) {
-		SLDeleteNode( iter->current, iter->destroyFunc );
-	}
+	if(iter == NULL)  return;
+	if(it->current != NULL) {
+		iter->current->refCount--;
+		if ( iter->current->refCount < 1 ) {
+			SLDeleteNode( iter->current, iter->destroyFunc );
+		}
+	};
 	free(iter);
 }
 
@@ -253,7 +256,7 @@ void * SLGetItem( SortedListIteratorPtr iter ){
 	// ptr->data = iter->current->data;
 	// //ptr->next = NULL;
 	// //ptr->refCount++;
-	if(iter->current == NULL)  return 0;
+	if(iter->current == NULL || iter == NULL)  return 0;
 	printf(" (rc: %d)", iter->current->refCount);
 	return iter->current->data;
 	// return (void *) ptr->data;

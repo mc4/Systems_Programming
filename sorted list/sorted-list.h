@@ -50,7 +50,6 @@ typedef struct SortedList* SortedListPtr;
 struct SortedListIterator{
 	//NodePtr head; useful if we have to go backwards in list
 	NodePtr current;
-	CompareFuncT compareFunc;
 	DestructFuncT destroyFunc;
 };
 typedef struct SortedListIterator* SortedListIteratorPtr;
