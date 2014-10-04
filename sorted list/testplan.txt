@@ -1,6 +1,6 @@
 Systems Programming 
 Assignment 2: Sorted List
-Test plan
+Test
 Mark Conley && Michael Newman
 
 Test Case 1: Compare Ints
@@ -19,43 +19,44 @@ Test Case 2: Compare Doubles
 
 Test Case 3: Compare Strings
 
-	Insert: test, zoro, qwerty
+	Insert: test, zoro, qwerty, alphabest, peanut butter
 
 	Expected: zoro, qwerty, test, alphabet, peanut butter
 	Result: zoro, qwerty, test, peanut butter, alphabet
 
 Test Case 4: Compare Chars
 
-	Insert: a, b, z, y, c, d, w, x
+	Insert: a, b, z, y, c
 
-	Expected: z, y, x, w, d, c, b, a
-	Result: z, y, x, w, d, c, b, a
+	Expected: z, y, c, b, a
+	Result: z, y, x, c, b, a
 
-Test Case 5: Compare Ints (remove 100 and 45 after inserting 56)
+Test Case 5: Compare Ints (remove 10 and 9 after inserting 8)
 
-	Insert: 100, 45 50, 76, 90, 99, 56
-	Remove: 100, 45
+	Insert: 10, 9, 8, 7, 6
+	Remove: 10, 9
 
-	Expected: 99, 90, 76, 56, 50
-	Result: 99, 90, 76, 56, 50
+	Expected: 10, 9, 8, 7, 6
+	Result: 8, 7, 6
 
-Test Case 8: Compare Ints (remove 100 after 50)
+Test Case 6: Compare Ints (remove 7 while iter is on 7 and 6 while iter is on 6)
 
-	Insert: ...
+	Insert: 1, 2, 3, 4, 5, 6, 7
+	Remove: 7, 6
 
-	Expected:
-	Result:
+	Expected: 5, 4, 3, 2, 1
+	Result: 5, 4, 3, 2, 1
 
 
-Test Case 6: Compare Char - Remove while iterating (remove while iterator is on x and c)
+Test Case 7: Compare Char - Remove while iterating (remove while iterator is on x and c)
 
-	Insert: a, b, z, y, c, d, w, x
-	Remove: a, w
+	Insert: a, b, z, y, c
+	Remove: a, z
 
-	Expected: z, y, x, d, c, b
-	Result: z, y, x, d, c, b
+	Expected: y, c, b
+	Result: y, c, b
 
-Test Case 7: Compare Int - Remove object while iter is pointing to it (remove called on 4)
+Test Case 8: Compare Int - Remove object while iter is pointing to it (remove called on 4)
 
 	Insert: 9, 5, 4, 3, 1
 	Remove: 4
@@ -63,7 +64,7 @@ Test Case 7: Compare Int - Remove object while iter is pointing to it (remove ca
 	Expected: 9, 5, 3, 1
 	Result: 9, 5, 3, 1 
 
-Test Case 8: Compare Ints
+Test Case 9: Compare Ints
 
 	Insert: ...
 

@@ -59,225 +59,164 @@ void printListFromIterator(SortedListPtr slpInt) {
 int main()
 {
 
-	SortedListPtr slpInt = SLCreate(compareInts, destroyBasicTypeNoAlloc);
-	//SortedListPtr slpChar = SLCreate(compareStrings, destroyBasicTypeNoAlloc);
-	//SortedListPtr slpDouble = SLCreate(compareDoubles, destroyBasicTypeNoAlloc);
+int choice;
+printf("Please enter a test case number 1 - 8.\n");
+scanf("%d\n", &choice);
 
-	// int x, *p, *v;
-	// p = malloc(sizeof(int));
-	// // SortedListPtr sl = SLCreate(compareInts);
-	// // SortedListIteratorPtr si;
-    
-	// while(scanf("%d",&x)==1) {
-	// 	v = malloc(sizeof(int));
-	// 	*v = x;
-	// 	printf("address: %d\n", *(int*)&v);
-	// 	SLInsert(slpInt,v);
-	// }
+switch(choice){
+	case 1:
+		printf("Comparing Ints.\n");
+		printf("Input is: 10, 9, 8, 7, 6\n");
 
-	//100, 45, 50, 76, 90, 99, 56
-	// int a = 100;
-	// int b = 45;
-	// int c = 50;
-	// int d = 76;
-	// int e = 90;
-	// int f = 99;
-	// int g = 56;
-	int a = 1;
-	int b = 2;
-	int c = 3;
-	int d = 4;
-	int e = 5;
-	int f = 6;
-	int g = 7;
-	int test;
+		int a = 10;
+		int b = 9;
+		int c = 8;
+		int d = 7;
+		int e = 6;
 
-	SLInsert(slpInt, (void*)&a);
-	SLInsert(slpInt, (void*)&b);
-	SLInsert(slpInt, (void*)&c);
-	// test = SLRemove(slpInt, (void*)&a);
-	SLInsert(slpInt, (void*)&d);
-	SLInsert(slpInt, (void*)&e);
-	SLInsert(slpInt, (void*)&f);
-	SLInsert(slpInt, (void*)&g);
+		SortedListPtr slpInt = SLCreate(compareInts, destroyBasicTypeNoAlloc);
+		SLInsert(slpInt, (void*)&a);
+		SLInsert(slpInt, (void*)&b);
+		SLInsert(slpInt, (void*)&c);
+		SLInsert(slpInt, (void*)&d);
+		SLInsert(slpInt, (void*)&e);
 
-	printf("%d\n", test);
+		printf("Expected output: 10, 9, 8, 7, 6\n");
+		printIntList(slpInt);
+		SLDestroy(slpInt);
+		break;
+	case 2:
+		printf("Comparing Ints.\n");
+		printf("Input is: 10, 9, 8, 7, 6\n");
 
-	// char s1[] = "test";
-	// char s2[] = "zoro";
-	// SLInsert(slpChar, (void*)&s1);
-	// SLInsert(slpChar, (void*)&s2);
-	// SLInsert(slpChar, (void*)"qwerty");
-	// SLInsert(slpChar, (void*)"alphabet");
-	// SLInsert(slpChar, (void*)"peanut butter");
+		double f = 22.1;
+		double g = 25.;
+		double h = 34.3455;
+		double i = 3.3;
+		double j = 3.14295;
 
-	// double dub = 1.2;
-	// double dub2 = 22.1234234234;
-	// double dub3 = 0.1;
-	// double dub4 = 12;
-	// SLInsert(slpDouble, (void*)&dub);
-	// SLInsert(slpDouble, (void*)&dub2);
-	// SLInsert(slpDouble, (void*)&dub3);
-	// SLInsert(slpDouble, (void*)&dub4);
+		SortedListPtr slpDouble = SLCreate(compareDoubles, destroyBasicTypeNoAlloc);
+		SLInsert(slpDouble, (void*)&f);
+		SLInsert(slpDouble, (void*)&g);
+		SLInsert(slpDouble, (void*)&h);
+		SLInsert(slpDouble, (void*)&i);
+		SLInsert(slpDouble, (void*)&j);
 
-	// printf("%d\n", strcmp("zoro", "qwerty"));
+		printf("Expected output: 34.3455, 25, 22.1, 3.3, 3.14295");
+		printDoubleList(slpDouble);
+		SLDestroy(slpDouble);
+		break;
+	case 3:
+		printf("Comparing Strings.\n");
+		printf("Input is: test, zoro, qwerty, alphabet, peanut butter\n");
 
-	printIntList(slpInt);
-	// printCharList(slpChar);
-	// printIDoubleList(slpDouble);
+		char *k = "test";
+		char *l = "zoro";
+		char *m = "qwerty";
+		char *n = "alphabet";
+		char *o = "peanut butter";
 
-	printf("\n-------------------- iterators --------------------\n\n");
-	
-	printf("Initial list\n");
-	printListFromIterator(slpInt);
-	
-	// create iterator
-	SortedListIteratorPtr intIter1 = SLCreateIterator(slpInt);
-	printListFromIterator(slpInt);
-	
-	int* iterData = (int*)SLGetItem(intIter1);
-	printf(" Current ptr data:%d\n", *iterData);
-	printListFromIterator(slpInt);
+		SortedListPtr slp = SLCreate(compareInts, destroyBasicTypeNoAlloc);
+		SLInsert(slp, (void*)&k);
+		SLInsert(slp, (void*)&l);
+		SLInsert(slp, (void*)&m);
+		SLInsert(slp, (void*)&n);
+		SLInsert(slp, (void*)&o);
 
-	int x;
-	while(scanf("%d",&x)==1) {
-		// iterate to next node
-		if(x == 1) {
-			iterData = (int*)SLNextItem(intIter1);
-			if(iterData != NULL) {
-				printf("Current ptr data:%d\n", *iterData);
-			}
-			else printf("eror, end of list\n");
-			printListFromIterator(slpInt);
-		}
+		printf("Expected output: zoro, test, qwerty, peanut butter, alphabet");
+		printf("Result: zoro, test, qwerty, peanut butter, alphabet");	
+		SLDestroy(slp);
+		break;
+	case 4:
+		printf("Comparing Chars.\n");
+		printf("Input is: a, b, z, y, c, d, w, x\n");
 
-		// delete current node
-		else if(x == 2) {
-			printf("Removing current ptr data:%d\n", *iterData);
-			int remove = SLRemove(slpInt, iterData);
-			if(!remove) printf("error: failed to remove\n");
-			printListFromIterator(slpInt);	
-			printf("current node: %d\n", *(int*)SLGetItem(intIter1));
-		}
+		char p = 'a';
+		char q = 'b';
+		char r = 'z';
+		char s = 'y';
+		char t = 'c';
 
-		else if(x == 3) {
-			int* iterData = (int*)SLGetItem(intIter1);
-			printf(" Current ptr data:%d\n", *iterData);
-			printListFromIterator(slpInt);
-		}
-	}
+		SortedListPtr slpChar = SLCreate(compareInts, destroyBasicTypeNoAlloc);
+		SLInsert(slpChar, (void*)&p);
+		SLInsert(slpChar, (void*)&q);
+		SLInsert(slpChar, (void*)&r);
+		SLInsert(slpChar, (void*)&s);
+		SLInsert(slpChar, (void*)&t);
 
-	
-	printListFromIterator(slpInt);
-	
+		printf("Expected output: z, y, c, b, a");
+		printCharList(slpChar);
+		SLDestroy(slpChar);	
+		break;
+	case 5:
+		printf("Comparing Ints.\n");
+		printf("Input is: 10, 9, 8, 7, 6\n");
+
+		int u = 10;
+		int v = 9;
+		int w = 8;
+		int x = 7;
+		int y = 6;
+
+		SortedListPtr slpInt2 = SLCreate(compareInts, destroyBasicTypeNoAlloc);
+		SLInsert(slpInt2, (void*)&u);
+		SLInsert(slpInt2, (void*)&v);
+		SLRemove(slpInt2, (void*)&u); //removing10
+		SLInsert(slpInt2, (void*)&w);
+		SLInsert(slpInt2, (void*)&x);
+		SLRemove(slpInt2, (void*)&v); //removing 9
+		SLInsert(slpInt2, (void*)&y);
+
+		printf("Expected output: 8, 7, 6\n");
+		printIntList(slpInt2);
+		SLDestroy(slpInt2);		
+		break;
+	case 6:
+		printf("Compare Ints - remove 9 while iterator is on 9 and remove 6 while iterator is on 6\n");
+		printf("Input is: 10, 9, 8, 7, 6\n");
+
+		int aa = 10;
+		int bb = 9;
+		int cc = 8;
+		int dd = 7;
+		int ee = 6;
+
+		SortedListPtr slpInt3 = SLCreate(compareInts, destroyBasicTypeNoAlloc);
+		NodePtr ptr;
+
+		// int* iterData = (int*)SLGetItem(intIter1);
+		// printListFromIterator(slpInt);
+
+		SLInsert(slpInt3, (void*)&aa);
+		SLInsert(slpInt3, (void*)&bb);
+		SLInsert(slpInt3, (void*)&cc);
+		SLInsert(slpInt3, (void*)&dd);
+		SLInsert(slpInt3, (void*)&ee);
+
+		SortedListIteratorPtr iter = SLCreateIterator(slpInt3);
+
+		ptr = SLGetItem(iter); //returns 10
+		ptr = SLNextItem(iter); //returns 9
+		SLRemove(slpInt3, (void*)&bb);
+		ptr = SLNextItem(iter); //returns 8
+		ptr = SLNextItem(iter); //returns 7
+		ptr = SLNextItem(iter); //returns 6
+		SLRemove(slpInt3, (void*)&ee);
+
+		printf("Expected output: 10, 8, 7\n");
+		printIntList(slpInt3);
+
+		SLDestroy(slpInt3);
+		SLDestroyIterator(iter);
+		break;
+	case 7:
+	//remove while iter
 
 
-	SLDestroy(slpInt);
-	// SLDestroy(slpChar);
-	// SLDestroy(slpDouble);
-
-	// testHelper(compareInts, destroyBasicTypeNoAlloc);
+	case 8:
+	default:
+		printf("error, bad input.\n");
+}
 
 return 0;
 }
-
-/*
-int main()
-{
-
-	SortedListPtr slpInt = SLCreate(compareInts, destroyBasicTypeNoAlloc);
-	//SortedListPtr slpChar = SLCreate(compareStrings, destroyBasicTypeNoAlloc);
-	//SortedListPtr slpDouble = SLCreate(compareDoubles, destroyBasicTypeNoAlloc);
-
-	// int x, *p, *v;
-	// p = malloc(sizeof(int));
-	// // SortedListPtr sl = SLCreate(compareInts);
-	// // SortedListIteratorPtr si;
-    
-	// while(scanf("%d",&x)==1) {
-	// 	v = malloc(sizeof(int));
-	// 	*v = x;
-	// 	printf("address: %d\n", *(int*)&v);
-	// 	SLInsert(slpInt,v);
-	// }
-
-	//100, 45, 50, 76, 90, 99, 56
-	int *a = 100;
-	int *b = 45;
-	int *c = 50;
-	int *d = 76;
-	int *e = 90;
-	int *f = 99;
-	int *g = 56;
-	int *h = 100;
-
-	SLInsert(slpInt, (void*)&a);
-	SLInsert(slpInt, (void*)&b);
-	SLInsert(slpInt, (void*)&c);
-	SLInsert(slpInt, (void*)&d);
-	SLInsert(slpInt, (void*)&e);
-	//SLInsert(slpInt, (void*)&f);
-	//SLInsert(slpInt, (void*)&g);
-
-	// char s1[] = "test";
-	// char s2[] = "zoro";
-	// SLInsert(slpChar, (void*)&s1);
-	// SLInsert(slpChar, (void*)&s2);
-	// SLInsert(slpChar, (void*)"qwerty");
-	// SLInsert(slpChar, (void*)"alphabet");
-	// SLInsert(slpChar, (void*)"peanut butter");
-
-	// double dub = 1.2;
-	// double dub2 = 22.1234234234;
-	// double dub3 = 0.1;
-	// double dub4 = 12;
-	// SLInsert(slpDouble, (void*)&dub);
-	// SLInsert(slpDouble, (void*)&dub2);
-	// SLInsert(slpDouble, (void*)&dub3);
-	// SLInsert(slpDouble, (void*)&dub4);
-
-	// printf("%d\n", strcmp("zoro", "qwerty"));
-
-	printIntList(slpInt);
-	// printCharList(slpChar);
-	// printIDoubleList(slpDouble);
-	
-	printf("-------------------- iterators --------------------\n");
-	
-	// create iterator
-	SortedListIteratorPtr intIter = SLCreateIterator(slpInt);
-	intIter->compareFunc = compareInts;
-	CompareFuncT cf = intIter->compareFunc;
-	int compare;
-
-	compare = cf( (void*)&a, (void*)&d);
-	printf("compare test: %d\n", compare);	
-	
-	int* iterData = (int*)SLGetItem(intIter);
-	printf("iterData: %d\n", *iterData);
-
-	//ONLY WORKS WHEN LIST SIZE EQUALS 5
-	int i;
-	for(i = 0; i < 4; i++){
-	iterData = (int*)SLNextItem(intIter);
-		printf("iterData: %d\n", *iterData);
-
-	}
-
-	// for(iterData = (int*)SLNextItem(intIter);
-	// 	iterData != NULL; 
-	// 	iterData = (int*)SLNextItem(intIter)) {
-	// 	printf("%d\n", *iterData);
-	// }
-
-	printf("reached end of list\n");
-
-	SLDestroy(slpInt);
-	// SLDestroy(slpChar);
-	// SLDestroy(slpDouble);
-
-	// testHelper(compareInts, destroyBasicTypeNoAlloc);
-
-return 0;
-}
-*/
