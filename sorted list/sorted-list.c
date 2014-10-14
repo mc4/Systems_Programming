@@ -8,9 +8,6 @@
 #include "sorted-list.h"
 
 static void SLDeleteNode(NodePtr, DestructFuncT);
-static void printIntList(SortedListPtr);
-static void printCharList(SortedListPtr);
-static void printDoubleList(SortedListPtr list);
 
 /*
  * SLCreate creates a new, empty sorted list.  The caller must provide
@@ -326,44 +323,3 @@ static void SLDeleteNode(NodePtr ptr, DestructFuncT df){
 	free(ptr);
 }
 
-// Helper function to print out an int list without having to use iterators
-static void printIntList(SortedListPtr list){
- 	if(list == NULL) {
-		return;
-	}
-	
- 	NodePtr ptr = NULL;
- 	
-	for(ptr = list->front; ptr != NULL; ptr = ptr->next){
-		printf("%d->", *(int*)ptr->data);
-	}
-	printf("\n");
-}
-
-// Helper function to print out a double list without having to use iterators
-static void printDoubleList(SortedListPtr list){
- 	if(list == NULL) {
-		return;
-	}
-
- 	NodePtr ptr = NULL;
- 	
-	for(ptr = list->front; ptr != NULL; ptr = ptr->next){
-		printf("%f->", *(double*)ptr->data);
-	}
-	printf("\n");
-}
-
-// Helper function to print out a char list without having to use iterators
-static void printCharList(SortedListPtr list){
- 	if(list == NULL) {
-		return;
-	}
-
- 	NodePtr ptr = NULL;
-	 
-	for(ptr = list->front; ptr != NULL; ptr = ptr->next){
-		printf("%c->", *(char*)ptr->data);
-	}
-	printf("\n");
-}
