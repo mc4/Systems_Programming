@@ -53,6 +53,48 @@ void printListFromIterator(SortedListIteratorPtr slip) {
 	printf("\n");
 }
 
+// Helper function to print out an int list without having to use iterators
+void printIntList(SortedListPtr list){
+ 	if(list == NULL) {
+		return;
+	}
+	
+ 	NodePtr ptr = NULL;
+ 	
+	for(ptr = list->front; ptr != NULL; ptr = ptr->next){
+		printf("%d->", *(int*)ptr->data);
+	}
+	printf("\n");
+}
+
+// Helper function to print out a double list without having to use iterators
+void printDoubleList(SortedListPtr list){
+ 	if(list == NULL) {
+		return;
+	}
+
+ 	NodePtr ptr = NULL;
+ 	
+	for(ptr = list->front; ptr != NULL; ptr = ptr->next){
+		printf("%f->", *(double*)ptr->data);
+	}
+	printf("\n");
+}
+
+// Helper function to print out a char list without having to use iterators
+void printCharList(SortedListPtr list){
+ 	if(list == NULL) {
+		return;
+	}
+
+ 	NodePtr ptr = NULL;
+	 
+	for(ptr = list->front; ptr != NULL; ptr = ptr->next){
+		printf("%c->", *(char*)ptr->data);
+	}
+	printf("\n");
+}
+
 int main(int argc, char **argv)
 {
 
@@ -199,6 +241,8 @@ int main(int argc, char **argv)
 				ptr = SLNextItem(iter); //returns 6
 				SLRemove(slpInt3, (void*)&ee);
 
+				if(ptr == NULL);
+
 				printf("Expected output: 10, 8, 7\n");
 				printIntList(slpInt3);
 
@@ -235,6 +279,8 @@ int main(int argc, char **argv)
 				SLRemove(slpChar2, (void*)&ff);
 				SLRemove(slpChar2, (void*)&gg);
 
+				if(node == NULL);
+				
 				printCharList(slpChar2);
 
 				printf("Expected output: z, y, c\n");
@@ -275,6 +321,8 @@ int main(int argc, char **argv)
 				p1 = SLNextItem(iter2);
 				p2 = SLNextItem(iter3);
 				p2 = SLNextItem(iter3);
+
+				if(p1 == NULL || p2 || NULL);
 
 				SLRemove(slpInt4, (void*)&mm);
 				SLRemove(slpInt4, (void*)&ll);		

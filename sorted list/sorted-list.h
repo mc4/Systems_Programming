@@ -48,7 +48,6 @@ typedef struct SortedList* SortedListPtr;
  * beginning to end. You need to fill in the type as part of your implementation.
  */
 struct SortedListIterator{
-	//NodePtr head; useful if we have to go backwards in list
 	NodePtr current;
 	DestructFuncT destroyFunc;
 };
