@@ -1,0 +1,32 @@
+Mark Conley && Michael Newman
+Indexer Test plan
+
+Test 1:
+	We tested for a variety of invalid inputs. We submitted too few arguments, and too many arguments. We received the desired output. If the incorrect number of arguments are sent to indexer "invalid arguments" is printed via standard output and the program exits.
+
+	If the correct number of arguments are sent in with either being an empty string "invalid arguments" is printed via standard output and the program exits.
+
+Test 2:
+	We sent in valid arguments. The first argument was a text file to be written to and the second argument was a textfile to be indexed.
+
+	The output was correct.
+
+Test 3: 
+	We sent in valid arguments. The first argument was a text file to be written to and the second argument was a directory. The directory contained only files to be indexed.
+
+	The output was correct.
+
+Test 4:
+	We sent in valid arguments. The first argument was a text file to be written to and the second argument was a directory. The directory contained files and a single directory to be indexed. 
+
+	The output was correct.
+
+Test 5:
+	We sent in valid arguments. The first argument was a text file to be written to and the second argument was a directory. The directory contained files and a multiple directories to be indexed. 
+
+	The output was correct.
+
+Test 6:
+	We sent in valid arguments. The first argument was a text file to be written to and the second argument was a directory. The directory contained a single directory to be indexed. 
+
+	The output was correct.
