@@ -16,21 +16,21 @@
 
 TokenPtr words = NULL;
 
-int isDirectoryEmpty(char *dirname) {
-  int n = 0;
-  struct dirent *d;
-  DIR *dir = opendir(dirname);
-  if (dir == NULL) //Not a directory or doesn't exist
-    return 1;
-  while ((d = readdir(dir)) != NULL) {
-    if(++n > 2)
-      break;
-  }
-  closedir(dir);
-  if (n <= 2) //Directory Empty
-    return 1;
-  else
-    return 0;
+int isDirectoryEmpty( char *dirname ) {
+  	int n = 0;
+  	struct dirent *d;
+	DIR *dir = opendir(dirname);
+ 	if (dir == NULL) //Not a directory or doesn't exist
+    	return 1;
+  	while ((d = readdir(dir)) != NULL) {
+    	if(++n > 2)
+      		break;
+  	}
+  	closedir(dir);
+  	if (n <= 2) //Directory Empty
+    	return 1;
+  	else
+    	return 0;
 }
 
 void recursiveDirTraverser( char *entry ){
@@ -56,7 +56,6 @@ void recursiveDirTraverser( char *entry ){
 		strcat(path, "/");
 		strcat(path, pDirent->d_name);
         		
-        		// pDirent->d_name,
 		indexFile ( path );
 	}
 
@@ -85,9 +84,9 @@ void recursiveDirTraverser( char *entry ){
 	        		// pDirent->d_name,
 			indexFile ( path );
 
-			/* d_type == 4 when dir
-			 * if(S_ISDIR(statbuf.st_mode)) 
-			 */
+		/* d_type == 4 when dir
+		 * if(S_ISDIR(statbuf.st_mode)) 
+		 */
 		} else if( pDirent->d_type == 4 ) {
 
 			// if dir has no file
@@ -119,7 +118,6 @@ void recursiveDirTraverser( char *entry ){
 			return;
 		}
 	}
-	// remove(fname);
 	closedir(pDir);
 	return;
 }
@@ -134,8 +132,6 @@ void readFile ( FILE *file, char* filename )
 	// add 1 to the max for the null terminating character
 	// char word[BUFFER_LEN + 1];
 	char *word = (char *) malloc(sizeof(char) * (BUFFER_LEN + 1));
-
-	// memset(word, '\0', (MAX_WORD_LEN + 1));
 
 	int c;
 	int charCount = 0;
@@ -230,16 +226,13 @@ int indexWord( char *key, char *filename ) {
 		// shouldn't happen in current implementation
 		if ( search -> fileHead == NULL ) {
 			addFileNode( search, filename );
-		}
-		else if ( !strcmp(filename, (search->fileHead->filename)) ) {      // file already exists for word
+		} else if ( !strcmp(filename, (search->fileHead->filename)) ) {      // file already exists for word
 			search->fileHead->tokenCount++;
-		}
-		else {        // file doesn't exist for word
+		} else { // file doesn't exist for word
 			addFileNode( search, filename );
 		}
 
-	} 
-	else {  // word doesn't exist in the hashtable, create new word and file
+	} else {  // word doesn't exist in the hashtable, create new word and file
 		if ( (word = (TokenPtr) malloc(sizeof(struct Token))) == NULL ) exit(-1);
 		char *newKey = (char *) malloc(sizeof(char) * strlen(key));
 		strcpy(newKey, key);
@@ -247,10 +240,7 @@ int indexWord( char *key, char *filename ) {
 		word -> fileHead = NULL;
 		HASH_ADD_STR( words, key, word );
 		addFileNode( word, filename );
-
-		// printf("key added %s\n", word->key);
 	}
-
 	return 1;
 }
 
@@ -327,17 +317,10 @@ int main(int argc, char **argv){
 		indexFile ( input );
 		upDir = 0;
 	} else {
-		// int mainDirLen = 0;
-	 // 	// find absolute len of dir
-	 // 	char cwd[PATH_MAX];
-  //      		if ( getcwd(cwd, sizeof(cwd)) != NULL ) {
-  //      			mainDirLen = strlen(cwd);
-  //      		} else {
-  //      			printf("invalid arguments\n");
-	 	recursiveDirTraverser(input);
+	 	recursiveDirTraverser( input );
 	}
 
- 	printIndexToFile(outputFile, upDir);
+ 	printIndexToFile( outputFile, upDir );
 
  	return 0;
 }

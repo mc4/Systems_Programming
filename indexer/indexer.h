@@ -1,12 +1,19 @@
 #ifndef INDEXER_H
 #define INDEXER_H
 
+/*
+ * indexer.h 
+ * Mark Conley && Michael Newman
+ */
+
 #include <dirent.h>
 #include "uthash.h"
 
 #define BUFFER_LEN 25
 #define REALLOC_OFFSET 10
 #define KNRM  "\x1B[0m"
+#define KRED  "\x1B[31m"
+
 
 typedef struct FileNode* FileNodePtr;
 struct FileNode
@@ -23,13 +30,6 @@ struct Token
 	FileNodePtr fileHead;
 	UT_hash_handle hh;         /* makes this structure hashable */
 };
-
-#define KRED  "\x1B[31m"
-
-/*
- * indexer.h 
- * Mark Conley && Michael Newman
- */
 
 /*
  * recursively traverses directory
