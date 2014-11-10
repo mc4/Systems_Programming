@@ -1,4 +1,5 @@
 /*
+ * search.c
  * Mark Conley && Michael Newman
  *
  */
@@ -73,7 +74,7 @@ void parseFile( FILE * fp ){
 
 /* logical and search */
 void searchAND(char * input, char * tok){
-		printf("searchAND\n");
+	printf("searchAND\n");
 }
 
 /* logical or search*/
@@ -122,7 +123,7 @@ int hashFilesFromWord(char * word){
 		HASH_FIND_STR(fileList, tmp->filename, fileSearch);
 		
 		// if the file is not found, add it to the table
-		if(fileSearch == NULL) {
+		if( fileSearch == NULL ) {
 			FileInfoPtr newFileInfo = malloc(sizeof(struct FileInfo));
 			newFileInfo->key = tmp->filename;
 			newFileInfo->count = 1;
@@ -199,7 +200,16 @@ int main(int argc, char ** argv){
 
 	input = (char *)malloc( MAXLINELENGTH );
 	printf("Enter search command\n");
-	while( scanf("%s", input) ){
+	while( 1 ){
+		fgets(input, MAXLINELENGTH, stdin);
+
+		/* Remove trailing newline, if there. */
+    	if ((strlen(input) > 0) && (input[strlen(input) - 1] == '\n')){
+        	input[strlen(input) - 1] = '\0';
+    	}
+
+		//printf("in main input is: %s\n", input);
+
 		fflush(stdin);
 
 		tok = strtok(input, DELIM);
@@ -213,8 +223,10 @@ int main(int argc, char ** argv){
 				printFilesFromWord("abc");
 			} else if(strcmp(tok, "so") == 0){
 				searchOR(input, tok);
+				tok = NULL;
+				break;
 			} else {
-				printf("Unexpected command\n");
+				printf("Unknown command\n");
 				//continue;
 			}
 
