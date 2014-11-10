@@ -90,6 +90,7 @@ void printFilesFromWord(char * word){
 
 int hashFilesFromWord(char * word){
 
+return 0;
 }
 
 char * substring( const char * word, int firstIndex, int length ){
