@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "search.h"
+ #include "utlist.h"
 
 #define MAXLINELENGTH 1024
 
@@ -17,31 +18,31 @@ void parseFile( FILE * fp ){
 
 	char *word, *tok;
 	char line[MAXLINELENGTH];
-	int tik = 1; //flag to check file vs filecount
+	int tik; //flag to check file vs filecount
 	const int wordIndex = strlen("<list> ");
-	const char delim = ' ';
+	char delim = ' ';
 	TokenPtr token;
 
 	while( fgets( line, sizeof(line), fp) ){
 
+		tik = 1;
 		if(strstr(line,"<list>")){
 
 			word = substring( line, wordIndex, strlen(line)-wordIndex );
-
 			if( (token = (TokenPtr) malloc(sizeof(struct Token))) == NULL ) exit(-1);
 
 			token->key = word;
 			token->fileHead = NULL;
-			HASH_ADD_STR( wordList, key, word );
+			HASH_ADD_STR( wordList, key, token );
 
 		} else if(strstr(line,"</list>")){
 			token = NULL;
 		} else { //file names and counts
-			tok = strtok(line, delim);
-
+			tok = strtok(line, &delim);
 			while( tok != NULL ){
 				//if its a filename tik is true
 				if( tik ){
+					// printf("read file: %s\n", tok);
 
 					FileNodePtr file = (FileNodePtr)malloc(sizeof(char) * strlen(tok));
 					if(!file){
@@ -50,7 +51,7 @@ void parseFile( FILE * fp ){
 					}
 
 					//creating file node to add to list
-					char *newFile = (char *)malloc(sizeof(char) * strlen(filename));
+					char *newFile = (char *)malloc(sizeof(char) * strlen(tok));
 					strcpy(newFile, tok);
 					file->filename = newFile;
 					file->next = NULL;
@@ -63,8 +64,7 @@ void parseFile( FILE * fp ){
 					tik = 1;
 				}
 
-				tok = strtok(NULL, delim);
-
+				tok = strtok(NULL, &delim);
 			}
 		}
 
@@ -79,10 +79,40 @@ char * substring( const char * word, int firstIndex, int length ){
 	return s;
 }
 
+/*
+ *  Function for testing wordList structure - **IGNORE ME**
+  */
+void printShit() {
+	int isFirstIter = 1;
+	TokenPtr tmp, currentWord;
+	HASH_ITER(hh, wordList, currentWord, tmp) {
+		if(isFirstIter){
+			isFirstIter = 0;
+		} else {
+			printf("\n");
+		}
+		printf("<list> ");
+	      	printf("%s\n", currentWord->key);
+		
+		FileNodePtr tmp = currentWord->fileHead;
+		
+		printf("%s", tmp->filename);
+		
+		while(tmp->next != NULL) { 
+			tmp = tmp->next;
+			// printf("file: %s   \t count:  %d\n", tmp->filename, tmp->tokenCount);
+			printf(" %s", tmp->filename);
+		}
+		// if(currentWord->fileHead == NULL)
+		printf("\n</list>");
+		// printf("%s\n", currentWord->key);	
+	}
+}
+
 int main(int argc, char ** argv){
 
  	if(argc != 2){
- 		printf("invalid number of arguments.\n")
+ 		printf("invalid number of arguments.\n");
  		exit(1);
  	}
 
@@ -100,7 +130,8 @@ int main(int argc, char ** argv){
 
 	parseFile(fileptr);
 
-
+	// testing shit out
+	printShit();
 
  	return 0;
  }
