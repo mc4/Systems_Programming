@@ -1,4 +1,5 @@
 /*
+ * search.c
  * Mark Conley && Michael Newman
  *
  */
@@ -9,6 +10,7 @@
 #include "utlist.h"
 
 #define MAXLINELENGTH 1024
+#define MAXINPUTLENGTH 256
 #define DELIM " "
 
 TokenPtr wordList = NULL;
@@ -100,6 +102,10 @@ void searchAND(char * input, char * tok){
 /* logical or search*/
 void searchOR(char * input, char *tok){
 	printf("searchOR\n");
+
+	printf("input is: %s\n", input);
+	printf("tok is: %s\n", tok);
+
 }
 
 /* print  */
@@ -143,7 +149,7 @@ int hashFilesFromWord(char * word){
 		HASH_FIND_STR(fileList, tmp->filename, fileSearch);
 		
 		// if the file is not found, add it to the table
-		if(fileSearch == NULL) {
+		if( fileSearch == NULL ) {
 			FileInfoPtr newFileInfo = malloc(sizeof(struct FileInfo));
 			newFileInfo->key = tmp->filename;
 			newFileInfo->count = 1;
@@ -201,9 +207,9 @@ int main(int argc, char ** argv){
  		exit(1);
  	}
 
- 	char * input;
+ 	char * input, *list;
 	char * indexedFile; 
-	char * command;
+	// char * command;
 	// char delim = ' ';
 	FILE * fileptr;
 	char * tok;
@@ -218,11 +224,22 @@ int main(int argc, char ** argv){
 
 	parseFile(fileptr);
 
-	input = (char *)malloc( MAXLINELENGTH );
+	input = (char *)malloc( MAXINPUTLENGTH );
+	list = (char *)malloc( MAXINPUTLENGTH );
 	printf("Enter search command\n");
-	while( scanf("%s", input) ){
+	while( 1 ){
+		fgets(input, MAXINPUTLENGTH, stdin);
+
+		/* Remove trailing newline, if there. */
+    	if ((strlen(input) > 0) && (input[strlen(input) - 1] == '\n')){
+        	input[strlen(input) - 1] = '\0';
+    	}
+
+		printf("in main input is: %s\n", input);
+
 		fflush(stdin);
 
+		strcpy(list, input);
 		tok = strtok(input, DELIM);
 		while( tok != NULL ){
 			
@@ -230,12 +247,14 @@ int main(int argc, char ** argv){
 				printf("quitting\n");
 				return 0;
 			} else if(strcmp(tok, "sa") == 0){
-				searchAND(input, tok);
+				searchAND(list, tok);
 				printFilesFromWord("abc");
 			} else if(strcmp(tok, "so") == 0){
-				searchOR(input, tok);
+				searchOR(list, tok);
+				tok = NULL;
+				break;
 			} else {
-				printf("Unexpected command\n");
+				printf("Unknown command\n");
 				//continue;
 			}
 
