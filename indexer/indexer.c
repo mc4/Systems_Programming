@@ -318,8 +318,8 @@ int main(int argc, char **argv){
 	}
 
 	int upDir = 1;
-	if( isFile(input )){
-		indexFile ( input );
+	if( isFile( input )){
+		indexFile( input );
 		upDir = 0;
 	} else {
 	 	recursiveDirTraverser( input );
