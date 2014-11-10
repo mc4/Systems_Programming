@@ -73,7 +73,28 @@ void parseFile( FILE * fp ){
 
 /* logical and search */
 void searchAND(char * input, char * tok){
-		printf("searchAND\n");
+	// need to tokenize the string
+	// first token we add to hash table
+	// next tokens we check whats in hash table
+	// then print based on values in hash table
+
+	tok = strtok(input, DELIM);
+	if(tok == NULL) {
+		printf("Invalid search terms\n");
+	}
+	char *tok1 = tok;
+	tok = strtok(input, DELIM);
+	if(tok == NULL) {
+		printFilesFromWord(tok1);
+	}
+
+	while( tok != NULL ){
+
+		tok = strtok(NULL, DELIM);
+		printf("Enter search command\n");
+	}
+
+	printf("searchAND\n");
 }
 
 /* logical or search*/
@@ -132,7 +153,7 @@ int hashFilesFromWord(char * word){
 		}
 		tmp = tmp->next;
 	}
-	
+
 	return 1;
 }
 
