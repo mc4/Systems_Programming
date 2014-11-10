@@ -74,14 +74,14 @@ void parseFile( FILE * fp ){
 }
 
 /* logical and search */
-void searchAND(char * input, char * tok){
+void searchAND(char * input){
 	// need to tokenize the string
 	// first token we add to hash table
 	// next tokens we check whats in hash table
 	// then print based on values in hash table
 
-	tok = strtok(input, DELIM);
-	if(tok == NULL) {
+	char *tok = strtok(input, DELIM);
+	if(input == NULL) {
 		printf("Invalid search terms\n");
 	}
 	char *tok1 = tok;
@@ -93,18 +93,18 @@ void searchAND(char * input, char * tok){
 	while( tok != NULL ){
 
 		tok = strtok(NULL, DELIM);
-		printf("Enter search command\n");
+		// printf("Enter search command\n");
 	}
 
 	printf("searchAND\n");
 }
 
 /* logical or search*/
-void searchOR(char * input, char *tok){
+void searchOR(char * input){
 	printf("searchOR\n");
 
 	printf("input is: %s\n", input);
-	printf("tok is: %s\n", tok);
+	// printf("tok is: %s\n", tok);
 
 }
 
@@ -226,44 +226,44 @@ int main(int argc, char ** argv){
 
 	input = (char *)malloc( MAXINPUTLENGTH );
 	list = (char *)malloc( MAXINPUTLENGTH );
-	printf("Enter search command\n");
+
 	while( 1 ){
+
+		printf("Enter search command\n");
+		fflush(stdin);
 		fgets(input, MAXINPUTLENGTH, stdin);
 
 		/* Remove trailing newline, if there. */
-    	if ((strlen(input) > 0) && (input[strlen(input) - 1] == '\n')){
-        	input[strlen(input) - 1] = '\0';
-    	}
+	    	if ((strlen(input) > 0) && (input[strlen(input) - 1] == '\n')){
+	        		input[strlen(input) - 1] = '\0';
+    		}
 
 		printf("in main input is: %s\n", input);
 
-		fflush(stdin);
-
-		strcpy(list, input);
+		strcpy(list, input+3);
 		tok = strtok(input, DELIM);
-		while( tok != NULL ){
 			
-			if(strcmp(tok, "q") == 0){
-				printf("quitting\n");
-				return 0;
-			} else if(strcmp(tok, "sa") == 0){
-				searchAND(list, tok);
-				printFilesFromWord("abc");
-			} else if(strcmp(tok, "so") == 0){
-				searchOR(list, tok);
-				tok = NULL;
-				break;
-			} else {
-				printf("Unknown command\n");
-				//continue;
-			}
-
-			tok = strtok(NULL, DELIM);
-			printf("Enter search command\n");
+		if(strcmp(tok, "q") == 0){
+			printf("quitting\n");
+			break;
+		} else if(strcmp(tok, "sa") == 0){
+			searchAND(list);
+			// printFilesFromWord("abc");
+		} else if(strcmp(tok, "so") == 0){
+			searchOR(list);
+			// tok = NULL;
+			// break;
+		} else {
+			printf("Unknown command\n");
 		}
-	
+
+		// tok = strtok(NULL, DELIM);
 	}
 
+	free(input);
+	free(list);
+	free(tok);  // needed???
+	
 	// testing shit out
 	printShit();
 

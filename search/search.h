@@ -39,7 +39,7 @@ int hashFilesFromWord(char *);
 void parseFile(FILE *);
 
 /* search functions */
-void searchAND(char *, char *);
-void searchOR(char *, char *);
+void searchAND(char *);
+void searchOR(char *);
 
  #endif
