@@ -10,6 +10,7 @@
 #include "utlist.h"
 
 #define MAXLINELENGTH 1024
+#define MAXINPUTLENGTH 256
 #define DELIM " "
 
 TokenPtr wordList = NULL;
@@ -201,7 +202,7 @@ int main(int argc, char ** argv){
 	input = (char *)malloc( MAXLINELENGTH );
 	printf("Enter search command\n");
 	while( 1 ){
-		fgets(input, MAXLINELENGTH, stdin);
+		fgets(input, MAXINPUTLENGTH, stdin);
 
 		/* Remove trailing newline, if there. */
     	if ((strlen(input) > 0) && (input[strlen(input) - 1] == '\n')){
