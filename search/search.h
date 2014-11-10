@@ -31,11 +31,14 @@ struct FileInfo
 	UT_hash_handle hh;
 };
 
-/* returns a substring from of a word */
+/* utils */
 char * substring(const char *, int, int);
-
-/* search... */
+void printFilesFromWord(char *);
+int hashFilesFromWord(char *);
 void parseFile(FILE *);
 
+/* search functions */
+void searchAND(char *, char *);
+void searchOR(char *, char *);
 
  #endif

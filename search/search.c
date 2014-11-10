@@ -9,6 +9,7 @@
 #include "utlist.h"
 
 #define MAXLINELENGTH 1024
+#define DELIM " "
 
 TokenPtr wordList = NULL;
 FileInfoPtr fileList = NULL;
@@ -20,10 +21,10 @@ void parseFile( FILE * fp ){
 	char line[MAXLINELENGTH];
 	int tik; //flag to check file vs filecount
 	const int wordIndex = strlen("<list> ");
-	char delim = ' ';
+	// char delim = ' ';
 	TokenPtr token;
 
-	while( fgets( line, sizeof(line), fp) ){
+	while( fgets(line, sizeof(line), fp) ){
 
 		tik = 1;
 		if(strstr(line,"<list>")){
@@ -38,7 +39,7 @@ void parseFile( FILE * fp ){
 		} else if(strstr(line,"</list>")){
 			token = NULL;
 		} else { //file names and counts
-			tok = strtok(line, &delim);
+			tok = strtok(line, DELIM);
 			while( tok != NULL ){
 				//if its a filename tik is true
 				if( tik ){
@@ -64,11 +65,30 @@ void parseFile( FILE * fp ){
 					tik = 1;
 				}
 
-				tok = strtok(NULL, &delim);
+				tok = strtok(NULL, DELIM);
 			}
 		}
-
 	}
+}
+
+/* logical and search */
+void searchAND(char * input, char * tok){
+		printf("searchAND\n");
+}
+
+/* logical or search*/
+void searchOR(char * input, char *tok){
+	printf("searchOR\n");
+}
+
+/* print  */
+void printFilesFromWord(char * word){
+
+
+
+}
+
+int hashFilesFromWord(char * word){
 
 }
 
@@ -81,7 +101,7 @@ char * substring( const char * word, int firstIndex, int length ){
 
 /*
  *  Function for testing wordList structure - **IGNORE ME**
-  */
+ */
 void printShit() {
 	int isFirstIter = 1;
 	TokenPtr tmp, currentWord;
@@ -92,7 +112,7 @@ void printShit() {
 			printf("\n");
 		}
 		printf("<list> ");
-	      	printf("%s\n", currentWord->key);
+	    printf("%s\n", currentWord->key);
 		
 		FileNodePtr tmp = currentWord->fileHead;
 		
@@ -116,9 +136,12 @@ int main(int argc, char ** argv){
  		exit(1);
  	}
 
-
+ 	char * input;
 	char * indexedFile; 
+	char * command;
+	// char delim = ' ';
 	FILE * fileptr;
+	char * tok;
 
 	indexedFile = argv[1];
 	fileptr = fopen(argv[1], "r");
@@ -129,6 +152,32 @@ int main(int argc, char ** argv){
 	}
 
 	parseFile(fileptr);
+
+	input = (char *)malloc( MAXLINELENGTH );
+	printf("Enter search command\n");
+	while( scanf("%s", input) ){
+		fflush(stdin);
+
+		tok = strtok(input, DELIM);
+		while( tok != NULL ){
+			
+			if(strcmp(tok, "q") == 0){
+				printf("quitting\n");
+				return 0;
+			} else if(strcmp(tok, "sa") == 0){
+				searchAND(input, tok);
+			} else if(strcmp(tok, "so") == 0){
+				searchOR(input, tok);
+			} else {
+				printf("Unexpected command\n");
+				//continue;
+			}
+
+			tok = strtok(NULL, DELIM);
+			printf("Enter search command\n");
+		}
+	
+	}
 
 	// testing shit out
 	printShit();
