@@ -81,11 +81,14 @@ void searchAND(char * input){
 	// then print based on values in hash table
 
 	char *tok = strtok(input, DELIM);
+	printf("tok: %s\n", tok);
 	if(input == NULL) {
 		printf("Invalid search terms\n");
 	}
 	char *tok1 = tok;
-	tok = strtok(input, DELIM);
+	tok = strtok(NULL, DELIM);
+	printf("tok1 (should be same as tok): %s\n", tok1);
+	printf("new tok: %s\n", tok);
 	if(tok == NULL) {
 		printFilesFromWord(tok1);
 	}
@@ -262,8 +265,7 @@ int main(int argc, char ** argv){
 
 	free(input);
 	free(list);
-	free(tok);  // needed???
-	
+
 	// testing shit out
 	printShit();
 
