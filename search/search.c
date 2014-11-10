@@ -29,7 +29,7 @@ void parseFile( FILE * fp ){
 		tik = 1;
 		if(strstr(line,"<list>")){
 
-			word = substring( line, wordIndex, strlen(line)-wordIndex );
+			word = substring( line, wordIndex, strlen(line)-wordIndex-1 );
 			if( (token = (TokenPtr) malloc(sizeof(struct Token))) == NULL ) exit(-1);
 
 			token->key = word;
@@ -84,13 +84,56 @@ void searchOR(char * input, char *tok){
 /* print  */
 void printFilesFromWord(char * word){
 
+	TokenPtr search;
+	HASH_FIND_STR(wordList, word, search);
 
+	if( search == NULL ) {
+		printf("\"%s\" not found\n", word);
+		return;
+	} else {
 
+		FileNodePtr tmp = search->fileHead;
+		printf("\n%s", tmp->filename);
+		
+		while( tmp->next != NULL ) { 
+			tmp = tmp->next;
+			printf(", %s", tmp->filename);
+		}
+		printf("\n");
+	}
 }
 
+/*
+ *  Hashes the files from the word into fileList variable
+ *  returns 0 if the word has no file occurances (ie is not in wordList), 1 if we sucessfully hash files from word
+ */
 int hashFilesFromWord(char * word){
+	
+	TokenPtr search;
+	HASH_FIND_STR(wordList, word, search);
 
-return 0;
+	if( search == NULL ) {
+		return 0;
+	}
+
+	FileNodePtr tmp = search->fileHead;
+	FileInfoPtr fileSearch;
+	while( tmp != NULL ) { 
+		HASH_FIND_STR(fileList, tmp->filename, fileSearch);
+		
+		// if the file is not found, add it to the table
+		if(fileSearch == NULL) {
+			FileInfoPtr newFileInfo = malloc(sizeof(struct FileInfo));
+			newFileInfo->key = tmp->filename;
+			newFileInfo->count = 1;
+			HASH_ADD_STR(fileList, key, newFileInfo);
+		} else {  // if found, increase count
+			fileSearch->count++;
+		}
+		tmp = tmp->next;
+	}
+	
+	return 1;
 }
 
 char * substring( const char * word, int firstIndex, int length ){
@@ -107,26 +150,26 @@ void printShit() {
 	int isFirstIter = 1;
 	TokenPtr tmp, currentWord;
 	HASH_ITER(hh, wordList, currentWord, tmp) {
-		if(isFirstIter){
-			isFirstIter = 0;
-		} else {
-			printf("\n");
-		}
-		printf("<list> ");
-	    printf("%s\n", currentWord->key);
+		// if(isFirstIter){
+		// 	isFirstIter = 0;
+		// } else {
+		// 	printf("\n");
+		// }
+		// printf("<list> ");
+	 //    printf("%s\n", currentWord->key);
 		
-		FileNodePtr tmp = currentWord->fileHead;
+		// FileNodePtr tmp = currentWord->fileHead;
 		
-		printf("%s", tmp->filename);
+		// printf("%s", tmp->filename);
 		
-		while(tmp->next != NULL) { 
-			tmp = tmp->next;
-			// printf("file: %s   \t count:  %d\n", tmp->filename, tmp->tokenCount);
-			printf(" %s", tmp->filename);
-		}
-		// if(currentWord->fileHead == NULL)
-		printf("\n</list>");
-		// printf("%s\n", currentWord->key);	
+		// while(tmp->next != NULL) { 
+		// 	tmp = tmp->next;
+		// 	// printf("file: %s   \t count:  %d\n", tmp->filename, tmp->tokenCount);
+		// 	printf(" %s", tmp->filename);
+		// }
+		// // if(currentWord->fileHead == NULL)
+		// printf("\n</list>");
+		printf("%s\n", currentWord->key);	
 	}
 }
 
@@ -167,6 +210,7 @@ int main(int argc, char ** argv){
 				return 0;
 			} else if(strcmp(tok, "sa") == 0){
 				searchAND(input, tok);
+				printFilesFromWord("abc");
 			} else if(strcmp(tok, "so") == 0){
 				searchOR(input, tok);
 			} else {
