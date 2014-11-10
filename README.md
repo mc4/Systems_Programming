@@ -6,4 +6,6 @@ Tokenizer[✓]
 
 Sorted List[✓]
 
-Indexer[]
+Indexer[✓]
+
+Search[]
