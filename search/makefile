@@ -20,9 +20,11 @@ all: default
 $(SEARCHOUTPUT): $(SEARCHOBJ)
 	$(CC) $(CFLAGS) $(SEARCHOBJ) $(SEARCHHEADERS) -o $@
 
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(INDEXEROUTPUT): $(INDEXEROBJ)
 	$(CC) $(CFLAGS) $(INDEXEROBJ) $(INDEXERHEADERS) -o $@
 
 clean:
-	rm -f *.o $(OUTPUT)
+	rm -f *.o $(SEARCHOUTPUT) $(INDEXEROUTPUT)

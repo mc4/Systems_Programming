@@ -7,6 +7,9 @@
 #ifndef SEARCH_H
 #define SEARCH_H
 
+#include <stdlib.h>
+ #include <stdio.h>
+#include "utlist.h"
 #include "uthash.h"
 
 typedef struct FileNode* FileNodePtr;

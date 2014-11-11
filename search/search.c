@@ -4,10 +4,7 @@
  *
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include "search.h"
-#include "utlist.h"
+ #include "search.h"
 
 #define MAXINPUTLENGTH 1024
 #define DELIM " "
@@ -302,7 +299,7 @@ int main(int argc, char ** argv){
 	char * tok;
 
 	indexedFile = argv[1];
-	fileptr = fopen(argv[1], "r");
+	fileptr = fopen(indexedFile, "r");
 
 	if(!fileptr){ 
 		printf("file returned null.\n");
