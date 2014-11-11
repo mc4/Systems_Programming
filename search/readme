@@ -1,0 +1,11 @@
+Our progam takes in an inverted index as an argument. The format of our indexer file follows the guidelines from the previous assignment. 
+
+The pattern of the file begins with a "<list>" tag on the first line followed by a word on the same line. On the next line there is the filepath followed by a space and then the word count corresponding to that particular file. This is repeated for each file the word is contained in. On the next line there is a </list> tag. 
+
+This entire pattern is repeated for each word found.
+
+Our program begins by parsing the file. It looks for the opening tag "<list>" and grabs the word. After grabbing the word it adds the word to a hashtable. Next it gets the files the word was found in and adds them to a linked list found in the struct for the word that we hashed. It does this for each word found in the inverted indexfile.
+
+We implemented two functions to handle the commands specified in the assignment guidelines. searchAND and searchOR performed logical and queries and logical or queries respectively. Both functions created a new hashtable for every search if more than one word was being searched for. We would then hash the files found for each word in the new hashtable and store and a count for the occurences. Once all the files were hashed from all the words we would print the results from the hashtable. searchOR prints everything in the hashtable while searchAND prints based on the counts. Note that the function for searchAND has some optimizations when hashing the files that removes files based on the counts when they are no longer needed in the hashtable, before printing. This improves both the efficiency of printing, but also decreases the space requirements.
+
+We checked our inputs to make sure they were proper commands in the proper formats. Additionally we made sure to free everything we allocated space for. Furthermore, to improve space efficiency the filename char * does not allocate space for every struct, instead we allocated for space once and just use pointers as needed.
