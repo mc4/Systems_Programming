@@ -12,6 +12,12 @@
 #define MAXLINELENGTH 1024
 #define MAXINPUTLENGTH 256
 #define DELIM " "
+#define OPT 1
+#define NO_OPT 0
+#define ADDNEW 1
+#define NONEW 0
+#define KNRM  "\x1B[0m"
+#define KCYN  "\x1B[36m"
 
 TokenPtr wordList = NULL;
 FileInfoPtr fileList = NULL;
@@ -73,33 +79,125 @@ void parseFile( FILE * fp ){
 	}
 }
 
+/* deletes and frees the things hashed into fileList */
+void resetFileList() {
+
+	FileInfoPtr current, tmp;
+
+	HASH_ITER(hh, fileList, current, tmp) {
+		HASH_DEL(fileList, current);
+		free(current);
+	}
+}
+
+/* deletes and frees the things hashed into fileList */
+void deleteWordList() {
+
+	TokenPtr current, tmp;
+
+	HASH_ITER(hh, wordList, current, tmp) {
+		
+		HASH_DEL(wordList, current);
+
+		FileNodePtr tmpF;
+		tmpF = current->fileHead;
+		while( tmpF != NULL ) {
+			current->fileHead = tmpF->next;
+			free(tmpF->filename);
+			free(tmpF);
+			tmpF = current->fileHead;
+		}
+		free(current->key);
+		free(current);
+	}
+}
+
+/* 
+ * prints the results of the search that are stored in the fileList hash table
+ * takes in a word count to check for searchAnd, ignores word counts if -1
+ */
+void printSearchResults( int wordCount ) {
+	// if wordCount is -1 ignore counts
+	FileInfoPtr current, tmp;
+	int count = 0;
+
+	printf("\n");
+	HASH_ITER(hh, fileList, current, tmp) {
+		if( wordCount == -1 ) {
+			printf("%s\n", current->key);
+			count++;
+		} else if( wordCount == current->count ) {
+			printf("%s\n", current->key);
+			count++;
+		}
+	}
+	if(count == 0){
+		printf("\nYour search produced no results\n");
+	}
+}
+
+
+void printAllCrap() {
+	printf("\nprint all the things\n");
+	FileInfoPtr current, tmp;
+
+	HASH_ITER(hh, fileList, current, tmp) {
+		printf("filename: %s\ncount: %d\n", current->key, current->count);
+	}
+	printf("\n");
+}
+
+
 /* logical and search */
 void searchAND(char * input){
-	// need to tokenize the string
-	// first token we add to hash table
-	// next tokens we check whats in hash table
-	// then print based on values in hash table
+	int wordCount = 0;
 
+	// First check if only one word, if so call printFilesFromWord()
 	char *tok = strtok(input, DELIM);
-	printf("tok: %s\n", tok);
+	// printf("tok: %s\n", tok);
+	
 	if(input == NULL) {
-		printf("Invalid search terms\n");
+		printf("\nInvalid search terms\n");
 	}
+	
 	char *tok1 = tok;
 	tok = strtok(NULL, DELIM);
-	printf("tok1 (should be same as tok): %s\n", tok1);
-	printf("new tok: %s\n", tok);
+	// printf("tok1 (should be same as tok): %s\n", tok1);
+	// printf("new tok: %s\n", tok);
+	
+	// only one search term inputted
 	if(tok == NULL) {
 		printFilesFromWord(tok1);
+		return;
 	}
+
+	// hash on the word in tok1, if returns 0 mean doesn't exist and search and already fails
+	if( !hashFilesFromWord(tok1, ADDNEW, NO_OPT, wordCount) ) {
+		printf("\nYour search produced no results\n");
+		return;
+	}
+	wordCount++;
 
 	while( tok != NULL ){
+		// if the word cannot be hashed because its not found there are no results
+		if( !hashFilesFromWord(tok, NONEW, OPT, wordCount) ) {
+			printf("\nYour search produced no results\n");
+			resetFileList();
+			return;	
+		}
+		wordCount++;
 
 		tok = strtok(NULL, DELIM);
-		// printf("Enter search command\n");
 	}
 
-	printf("searchAND\n");
+	// printAllCrap();
+	// printf("wordCount: %d\n", wordCount);
+
+	/*  ITERATE THROUGH HASHTABLE AND PRINT IF CORRECT COUNTS */
+	printSearchResults(wordCount);
+
+	/* FREE ITEMS IN SEARCHING HASH TABLE */
+	resetFileList();
 }
 
 /* logical or search*/
@@ -118,7 +216,7 @@ void printFilesFromWord(char * word){
 	HASH_FIND_STR(wordList, word, search);
 
 	if( search == NULL ) {
-		printf("\"%s\" not found\n", word);
+		printf("\n\"%s\" not found\n", word);
 		return;
 	} else {
 
@@ -134,10 +232,10 @@ void printFilesFromWord(char * word){
 }
 
 /*
- *  Hashes the files from the word into fileList variable
+ *  Hashes the files from the word into fileList variable, also takes in flags for 
  *  returns 0 if the word has no file occurances (ie is not in wordList), 1 if we sucessfully hash files from word
  */
-int hashFilesFromWord(char * word){
+int hashFilesFromWord(char * word, int addNew, int optimize, int wordCount){
 	
 	TokenPtr search;
 	HASH_FIND_STR(wordList, word, search);
@@ -152,17 +250,23 @@ int hashFilesFromWord(char * word){
 		HASH_FIND_STR(fileList, tmp->filename, fileSearch);
 		
 		// if the file is not found, add it to the table
-		if( fileSearch == NULL ) {
+		if( fileSearch == NULL && addNew ) {
 			FileInfoPtr newFileInfo = malloc(sizeof(struct FileInfo));
 			newFileInfo->key = tmp->filename;
 			newFileInfo->count = 1;
 			HASH_ADD_STR(fileList, key, newFileInfo);
-		} else {  // if found, increase count
-			fileSearch->count++;
+		} else if( fileSearch != NULL ) {  // if found
+			
+			// if optimizing check count and delete if count is less than wordCount
+			if( optimize && ((fileSearch->count) < wordCount) ) {
+				HASH_DEL( fileList, fileSearch );
+				free( fileSearch );
+			} else {
+				fileSearch->count++;
+			}
 		}
 		tmp = tmp->next;
 	}
-
 	return 1;
 }
 
@@ -206,7 +310,7 @@ void printShit() {
 int main(int argc, char ** argv){
 
  	if(argc != 2){
- 		printf("invalid number of arguments.\n");
+ 		printf("\ninvalid number of arguments.\n");
  		exit(1);
  	}
 
@@ -232,7 +336,7 @@ int main(int argc, char ** argv){
 
 	while( 1 ){
 
-		printf("Enter search command\n");
+		printf("\n%sEnter search command%s\n", KCYN, KNRM);
 		fflush(stdin);
 		fgets(input, MAXINPUTLENGTH, stdin);
 
@@ -241,7 +345,7 @@ int main(int argc, char ** argv){
 	        		input[strlen(input) - 1] = '\0';
     		}
 
-		printf("in main input is: %s\n", input);
+		// printf("in main input is: %s\n", input);
 
 		strcpy(list, input+3);
 		tok = strtok(input, DELIM);
@@ -265,9 +369,10 @@ int main(int argc, char ** argv){
 
 	free(input);
 	free(list);
+	deleteWordList();
 
 	// testing shit out
-	printShit();
+	// printShit();
 
  	return 0;
  }

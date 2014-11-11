@@ -35,8 +35,11 @@ struct FileInfo
 /* utils */
 char * substring(const char *, int, int);
 void printFilesFromWord(char *);
-int hashFilesFromWord(char *);
+int hashFilesFromWord(char *, int, int, int);
 void parseFile(FILE *);
+void resetFileList();
+void deleteWordList();
+void printSearchResults(int);
 
 /* search functions */
 void searchAND(char *);
