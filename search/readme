@@ -1,4 +1,8 @@
-Our progam takes in an inverted index as an argument. The format of our indexer file follows the guidelines from the previous assignment. 
+Mark Conley && Michael
+Systems Programming Assignment 4: Search
+readme
+
+Our progam takes in an inverted index as an argument. The format of our indexer file follows the guidelines from the indexer assignment. 
 
 The pattern of the file begins with a "<list>" tag on the first line followed by a word on the same line. On the next line there is the filepath followed by a space and then the word count corresponding to that particular file. This is repeated for each file the word is contained in. On the next line there is a </list> tag. 
 
