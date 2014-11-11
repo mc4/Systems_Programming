@@ -9,8 +9,7 @@
 #include "search.h"
 #include "utlist.h"
 
-#define MAXLINELENGTH 1024
-#define MAXINPUTLENGTH 256
+#define MAXINPUTLENGTH 1024
 #define DELIM " "
 #define OPT 1
 #define NO_OPT 0
@@ -19,6 +18,7 @@
 #define KNRM  "\x1B[0m"
 #define KCYN  "\x1B[36m"
 
+/* Vars for hashtables */
 TokenPtr wordList = NULL;
 FileInfoPtr fileList = NULL;
 
@@ -26,10 +26,9 @@ FileInfoPtr fileList = NULL;
 void parseFile( FILE * fp ){
 
 	char *word, *tok;
-	char line[MAXLINELENGTH];
+	char line[MAXINPUTLENGTH];
 	int tik; //flag to check file vs filecount
 	const int wordIndex = strlen("<list> ");
-	// char delim = ' ';
 	TokenPtr token;
 
 	while( fgets(line, sizeof(line), fp) ){
@@ -51,7 +50,6 @@ void parseFile( FILE * fp ){
 			while( tok != NULL ){
 				//if its a filename tik is true
 				if( tik ){
-					// printf("read file: %s\n", tok);
 
 					FileNodePtr file = (FileNodePtr)malloc(sizeof(char) * strlen(tok));
 					if(!file){
@@ -136,25 +134,12 @@ void printSearchResults( int wordCount ) {
 	}
 }
 
-
-void printAllCrap() {
-	printf("\nprint all the things\n");
-	FileInfoPtr current, tmp;
-
-	HASH_ITER(hh, fileList, current, tmp) {
-		printf("filename: %s\ncount: %d\n", current->key, current->count);
-	}
-	printf("\n");
-}
-
-
 /* logical and search */
 void searchAND(char * input){
 	int wordCount = 0;
 
 	// First check if only one word, if so call printFilesFromWord()
 	char *tok = strtok(input, DELIM);
-	// printf("tok: %s\n", tok);
 	
 	if( input == NULL || tok == NULL ) {
 		printf("\nInvalid search terms\n");
@@ -163,8 +148,6 @@ void searchAND(char * input){
 	
 	char *tok1 = tok;
 	tok = strtok(NULL, DELIM);
-	// printf("tok1 (should be same as tok): %s\n", tok1);
-	// printf("new tok: %s\n", tok);
 	
 	// only one search term inputted
 	if(tok == NULL) {
@@ -190,9 +173,6 @@ void searchAND(char * input){
 
 		tok = strtok(NULL, DELIM);
 	}
-
-	// printAllCrap();
-	// printf("wordCount: %d\n", wordCount);
 
 	/*  ITERATE THROUGH HASHTABLE AND PRINT IF CORRECT COUNTS */
 	printSearchResults(wordCount);
@@ -239,7 +219,9 @@ void searchOR(char * input){
 
 }
 
-/* print  */
+/* 
+ * takes in a single word and prints all files that word occurs in
+ */
 void printFilesFromWord(char * word){
 
 	TokenPtr search;
@@ -307,36 +289,6 @@ char * substring( const char * word, int firstIndex, int length ){
 	return s;
 }
 
-/*
- *  Function for testing wordList structure - **IGNORE ME**
- */
-void printShit() {
-	int isFirstIter = 1;
-	TokenPtr tmp, currentWord;
-	HASH_ITER(hh, wordList, currentWord, tmp) {
-		// if(isFirstIter){
-		// 	isFirstIter = 0;
-		// } else {
-		// 	printf("\n");
-		// }
-		// printf("<list> ");
-	 //    printf("%s\n", currentWord->key);
-		
-		// FileNodePtr tmp = currentWord->fileHead;
-		
-		// printf("%s", tmp->filename);
-		
-		// while(tmp->next != NULL) { 
-		// 	tmp = tmp->next;
-		// 	// printf("file: %s   \t count:  %d\n", tmp->filename, tmp->tokenCount);
-		// 	printf(" %s", tmp->filename);
-		// }
-		// // if(currentWord->fileHead == NULL)
-		// printf("\n</list>");
-		printf("%s\n", currentWord->key);	
-	}
-}
-
 int main(int argc, char ** argv){
 
  	if(argc != 2){
@@ -346,8 +298,6 @@ int main(int argc, char ** argv){
 
  	char * input, *list;
 	char * indexedFile; 
-	// char * command;
-	// char delim = ' ';
 	FILE * fileptr;
 	char * tok;
 
@@ -370,14 +320,18 @@ int main(int argc, char ** argv){
 		fflush(stdin);
 		fgets(input, MAXINPUTLENGTH, stdin);
 
+		// user pressed enter without entering text
+		if(strlen(input) == 1) {
+			printf("\nPlease enter a command\n");
+			continue;
+		}
+
 		/* Remove trailing newline, if there. */
 	    	if ((strlen(input) > 0) && (input[strlen(input) - 1] == '\n')){
 	        		input[strlen(input) - 1] = '\0';
     		}
 
-		// printf("in main input is: %s\n", input);
-
-		strcpy(list, input+3);
+		strcpy(list, input+3);   // would need to be changed if commands with length > 2
 		tok = strtok(input, DELIM);
 			
 		if(strcmp(tok, "q") == 0){
@@ -385,24 +339,17 @@ int main(int argc, char ** argv){
 			break;
 		} else if(strcmp(tok, "sa") == 0){
 			searchAND(list);
-			// printFilesFromWord("abc");
 		} else if(strcmp(tok, "so") == 0){
 			searchOR(list);
-			// tok = NULL;
-			// break;
 		} else {
 			printf("\nUnknown command\n");
 		}
 
-		// tok = strtok(NULL, DELIM);
 	}
 
 	free(input);
 	free(list);
 	deleteWordList();
-
-	// testing shit out
-	// printShit();
 
  	return 0;
  }
