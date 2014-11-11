@@ -1,0 +1,41 @@
+Mark Conley && Michael Newman
+Systems Programming Assignment 4: Search
+test plan
+
+We used two textfiles to test our sesarch. One was edited from the sample indexer given to us by the instructor/TA's. The othe was the output from our indexer assignment. 
+
+The first is rawr2.txt which has the following contents:
+
+<list> 123
+/home/mike/Systems_Programmings/search/aa/bb/test.txt 1
+</list>
+<list> abc
+/home/mike/Systems_Programmings/search/aa/a.txt 3 /home/mike/Systems_Programmings/search/aa/UntitledFolder/a.txt 3 /home/mike/Systems_Programmings/search/aa/bb/test.txt 2
+</list>
+<list> jashd
+/home/mike/Systems_Programmings/search/aa/a.txt 1 /home/mike/Systems_Programmings/search/aa/UntitledFolder/a.txt 1
+</list>
+<list> newwordddd
+/home/mike/Systems_Programmings/search/aa/a.txt 1 /home/mike/Systems_Programmings/search/aa/UntitledFolder/a.txt 1
+</list>
+
+Given the following commands our search produced the corresponding outputs.
+
+
+The next file named rawr.txt which has the following contents:
+
+<list> 123
+aa/bb/test.txt 1
+</list>
+<list> abc
+aa/a.txt 3 aa/UntitledFolder/a.txt 3 aa/bb/test.txt 2
+</list>
+<list> jashd
+aa/a.txt 1 aa/UntitledFolder/a.txt 1
+</list>
+<list> newworddd
+aa/a.txt 1 aa/UntitledFolder/a.txt 1 mooooooooo 2
+</list>
+
+Given the following commands our search produced the corresponding outputs.
+
