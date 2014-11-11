@@ -2,7 +2,7 @@ Mark Conley && Michael Newman
 Systems Programming Assignment 4: Search
 test plan
 
-We used two textfiles to test our sesarch. One was edited from the sample indexer given to us by the instructor/TA's. The othe was the output from our indexer assignment. 
+We used two textfiles to test our search. One was edited from the sample indexer given to us by the instructor/TA's. The othe was the output from our indexer assignment. 
 
 The first is rawr2.txt which has the following contents:
 
@@ -22,6 +22,99 @@ The first is rawr2.txt which has the following contents:
 Given the following commands our search produced the corresponding outputs.
 
 
+Input:
+	sa abc 123
+Output:
+	/home/mike/Systems_Programmings/search/aa/bb/test.txt
+
+Input:
+	sa abc 123 newworddd
+Output:
+	Your search produced no results
+
+Input:
+	sa abc 1234
+Output:
+	Your search produced no results
+
+Input:
+	so abc newworddd
+Output:
+	/home/mike/Systems_Programmings/search/aa/bb/test.txt
+	/home/mike/Systems_Programmings/search/aa/UntitledFolder/a.txt
+	/home/mike/Systems_Programmings/search/aa/a.txt
+
+Input:
+	so abc 123 newworddd jashd
+Output:
+	/home/mike/Systems_Programmings/search/aa/bb/test.txt
+	/home/mike/Systems_Programmings/search/aa/UntitledFolder/a.txt
+	/home/mike/Systems_Programmings/search/aa/a.txt
+
+Input:
+	so abc 123 zzzzz aaaaaa        
+Output:
+	/home/mike/Systems_Programmings/search/aa/bb/test.txt
+	/home/mike/Systems_Programmings/search/aa/UntitledFolder/a.txt
+	/home/mike/Systems_Programmings/search/aa/a.txt
+
+Input:
+	si abc
+Output:
+	Unknown command
+
+Input:
+	soabc
+Output:
+	Unknown command
+
+Input:
+	soo abc
+Output:
+	Unknown command
+
+Input:
+	<enter key pressed>
+Output:
+	Please enter a command
+
+Input:
+	so
+Output:
+	Invalid search terms
+
+Input:
+	sa
+Output:
+	Invalid search terms
+
+Input:
+	a
+Output:
+	Unknown command
+
+Input:
+	so abc
+Output:
+	/home/mike/Systems_Programmings/search/aa/bb/test.txt, /home/mike/Systems_Programmings/search/aa/UntitledFolder/a.txt, /home/mike/Systems_Programmings/search/aa/a.txt
+
+Input:
+	sa abc
+Output:
+	/home/mike/Systems_Programmings/search/aa/bb/test.txt, /home/mike/Systems_Programmings/search/aa/UntitledFolder/a.txt, /home/mike/Systems_Programmings/search/aa/a.txt
+
+Input:
+	quit
+Output:
+	Unknown command
+
+Input:
+	q
+Output:
+	quitting
+
+
+
 The next file named rawr.txt which has the following contents:
 
 <list> 123
@@ -37,5 +130,5 @@ aa/a.txt 1 aa/UntitledFolder/a.txt 1
 aa/a.txt 1 aa/UntitledFolder/a.txt 1 mooooooooo 2
 </list>
 
-Given the following commands our search produced the corresponding outputs.
+We did similar searching on this file and got appropriate results
 
