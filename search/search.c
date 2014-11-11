@@ -132,7 +132,7 @@ void printSearchResults( int wordCount ) {
 		}
 	}
 	if(count == 0){
-		printf("\nYour search produced no results\n");
+		printf("Your search produced no results\n");
 	}
 }
 
@@ -156,8 +156,9 @@ void searchAND(char * input){
 	char *tok = strtok(input, DELIM);
 	// printf("tok: %s\n", tok);
 	
-	if(input == NULL) {
+	if( input == NULL || tok == NULL ) {
 		printf("\nInvalid search terms\n");
+		return;
 	}
 	
 	char *tok1 = tok;
@@ -202,10 +203,39 @@ void searchAND(char * input){
 
 /* logical or search*/
 void searchOR(char * input){
-	printf("searchOR\n");
 
-	printf("input is: %s\n", input);
-	// printf("tok is: %s\n", tok);
+	// First check if only one word, if so call printFilesFromWord()
+	char *tok = strtok(input, DELIM);
+
+	if( input == NULL || tok == NULL ) {
+		printf("\nInvalid search terms\n");
+		return;
+	}
+	
+	char *tok1 = tok;
+	tok = strtok(NULL, DELIM);
+	
+	// only one search term inputted
+	if(tok == NULL) {
+		printFilesFromWord(tok1);
+		return;
+	}
+
+	// hash on the word in tok1
+	hashFilesFromWord(tok1, ADDNEW, NO_OPT, 0);
+
+	while( tok != NULL ){
+		// if the word cannot be hashed because its not found there are no results
+		hashFilesFromWord(tok, ADDNEW, NO_OPT, 0);
+
+		tok = strtok(NULL, DELIM);
+	}
+
+	/*  ITERATE THROUGH HASHTABLE AND PRINT IF CORRECT COUNTS (-1 to not check word counts) */
+	printSearchResults(-1);
+
+	/* FREE ITEMS IN SEARCHING HASH TABLE */
+	resetFileList();
 
 }
 
@@ -214,14 +244,14 @@ void printFilesFromWord(char * word){
 
 	TokenPtr search;
 	HASH_FIND_STR(wordList, word, search);
-
+	printf("\n");
 	if( search == NULL ) {
-		printf("\n\"%s\" not found\n", word);
+		printf("Your search produced no results\n");
 		return;
 	} else {
 
 		FileNodePtr tmp = search->fileHead;
-		printf("\n%s", tmp->filename);
+		printf("%s", tmp->filename);
 		
 		while( tmp->next != NULL ) { 
 			tmp = tmp->next;
@@ -351,7 +381,7 @@ int main(int argc, char ** argv){
 		tok = strtok(input, DELIM);
 			
 		if(strcmp(tok, "q") == 0){
-			printf("quitting\n");
+			printf("\nquitting\n");
 			break;
 		} else if(strcmp(tok, "sa") == 0){
 			searchAND(list);
@@ -361,7 +391,7 @@ int main(int argc, char ** argv){
 			// tok = NULL;
 			// break;
 		} else {
-			printf("Unknown command\n");
+			printf("\nUnknown command\n");
 		}
 
 		// tok = strtok(NULL, DELIM);
