@@ -1,6 +1,6 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
-//#include "queue.h"
 
 typedef struct QueueNode * QueueNodePtr;	
 struct QueueNode {
@@ -8,20 +8,20 @@ struct QueueNode {
 	QueueNodePtr next;
 };
 
+/* First In First Out */
 typedef struct Queue Queue; 
 struct Queue {
 	int isOpen;			//flag for when the producer is done
-	QueueNodePtr *head;	//dequeue here
-	QueueNodePtr *tail;	//enqueue here
+	QueueNodePtr head;	//dequeue here
+	QueueNodePtr tail;	//enqueue here
 	int length;
 	pthread_mutex_t mutex;
-	pthread_cond_t dataAvailable;
-	pthread_cond_t spaceAvailable;
 };
 
 Queue *Qcreate();
 void enqueue(Queue *, void *);
-void *dequeue(Queue *);
+void * dequeue(Queue *);
+void * Qpeek(Queue *);
 int Qlength(Queue *);
 void Qdestroyer(Queue *);
 
@@ -42,17 +42,13 @@ void enqueue(Queue *q, void *data){
 	queueNode->data = data;
 	queueNode->next = NULL;
 	if(q->length == 0){
-		// QueueNodePtr queueNode = malloc(sizeof(queueNode));
-		// queueNode->data = data;
-		// queueNode->next = NULL;
-		q->head = &queueNode;
-		q->tail = &queueNode;
+		queueNode->next = NULL;
+		q->head = queueNode;
+		q->tail = queueNode;
 	} else {
-		q->next
+		q->tail->next = queueNode;
+		q->tail = queueNode;
 	}
-	
-
-
 	q->length++;
 	pthread_mutex_unlock(&q->mutex);
 }
@@ -60,16 +56,37 @@ void enqueue(Queue *q, void *data){
 void * dequeue(Queue *q){
 	pthread_mutex_lock(&q->mutex);
 
+	if(q->length == 0){
+		pthread_mutex_unlock(&q->mutex);
+		return NULL;
+	}
+
+	QueueNodePtr head = q->head;
+	void * data = head->data;
+	if(q->length == 1){		
+		free(head);
+	} else {
+		q->head = q->head->next;
+		free(head);
+
+	}
 
 	q->length--;
   	pthread_mutex_unlock(&q->mutex);
 	return data;
 }
 
+/* looks at the  of the queue without changing it */
+/* TODO: implement this if necessary */
+void * Qpeek(Queue * q){
+	return NULL;
+}
+
 int Qlength(Queue *q){
 	return q->length;
 }
 
+/* dequeue frees nodes */
 void Qdestroyer(Queue *q){
 	while(q->length > 0){
 		dequeue(q);
@@ -78,5 +95,19 @@ void Qdestroyer(Queue *q){
 }
 
 int main(void){
+	Queue * q = Qcreate();
+
+	enqueue(q, (void*)-1);
+	enqueue(q, (void*)-2223);
+	enqueue(q, (void*)3333);
+	printf("q size is: %d = %d\n",q->length, Qlength(q));
+
+	int i = (int)dequeue(q);
+	int j = (int)dequeue(q);
+	int k = (int)dequeue(q);
+
+	printf("data is %d, %d, %d\n",i,j,k);
+
+	Qdestroyer(q);
 	return 0;
 }
