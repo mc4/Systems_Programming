@@ -29,8 +29,8 @@ Queue * Qcreate(){
 	Queue * q = malloc(sizeof(Queue));
 	if(!q) exit(1);
 	q->isOpen = 1;
-	q->head = NULL;
-	q->tail = NULL;
+	q->head   = NULL;
+	q->tail   = NULL;
 	q->length = 0;
 	pthread_mutex_init(&q->mutex,0);
 	return q;
@@ -42,13 +42,13 @@ void enqueue(Queue *q, void *data){
 	queueNode->data = data;
 	queueNode->next = NULL;
 	if(q->length == 0){
-		QueueNodePtr queueNode = malloc(sizeof(queueNode));
-		queueNode->data = data;
-		queueNode->next = NULL;
+		// QueueNodePtr queueNode = malloc(sizeof(queueNode));
+		// queueNode->data = data;
+		// queueNode->next = NULL;
 		q->head = &queueNode;
 		q->tail = &queueNode;
 	} else {
-
+		q->next
 	}
 	
 
