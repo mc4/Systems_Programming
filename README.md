@@ -8,4 +8,4 @@ Sorted List[✓]
 
 Indexer[✓]
 
-Search[]
+Search[[✓]
