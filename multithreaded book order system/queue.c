@@ -31,14 +31,14 @@ Queue * Qcreate(){
 	q->isOpen = 1;
 	q->head   = NULL;
 	q->tail   = NULL;
-	q->size = 0;
+	q->size   = 0;
 	pthread_mutex_init(&q->mutex,0);
 	return q;
 }
 
 void enqueue(Queue * q, void * data){
 	pthread_mutex_lock(&q->mutex);
-	QueueNodePtr queueNode = malloc(sizeof(queueNode));
+	QueueNodePtr queueNode = malloc(sizeof(struct QueueNode));
 	queueNode->data = data;
 	queueNode->next = NULL;
 	if(q->size == 0){
@@ -53,6 +53,7 @@ void enqueue(Queue * q, void * data){
 	pthread_mutex_unlock(&q->mutex);
 }
 
+/* returns the data from the  */
 void * dequeue(Queue * q){
 	pthread_mutex_lock(&q->mutex);
 
@@ -68,7 +69,6 @@ void * dequeue(Queue * q){
 	} else {
 		q->head = q->head->next;
 		free(head);
-
 	}
 
 	q->size--;
@@ -98,9 +98,9 @@ int main(void){
 	Queue * q = Qcreate();
 
 	enqueue(q, (void*)-1);
+	enqueue(q, (void*)1);
 	enqueue(q, (void*)-2223);
 	enqueue(q, (void*)3333);
-	printf("q size is: %d = %d\n",q->size, Qsize(q));
 
 	int i = (int)dequeue(q);
 	int j = (int)dequeue(q);
