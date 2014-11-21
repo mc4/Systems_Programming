@@ -1,0 +1,5 @@
+"Brian Russell"|1|500.00|"110 Frelinghuysen Rd., Piscataway"|"New Jersey"|"08854"
+"Ying Zhan"|2|65.00|"3100 Hamilton Blvd, South Plainfield"|"New Jersey"|"07080"
+"Sejong Yoon"|3|10.00|"200 Promenade Boulevard, Bridgewater"|"New Jersey"|"08807"
+"Yuanzhen Gu"|4|80.00|"45 Kilmer Road, Edison"|"New Jersey"|"08817"
+"Zi Yan"|5|100.00|"100 Middlesex Essex Turnpike, Iselin"|"New Jersey"|"08830"

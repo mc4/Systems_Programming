@@ -1,0 +1,74 @@
+=== BEGIN CUSTOMER INFO ===
+### BALANCE ###
+Customer name: Brian Russell
+Customer ID number: 1
+Remaining credit balance after all purchases (a dollar amount): 336.13
+### SUCCESSFUL ORDERS ###
+"I Could Pee on This: And Other Poems by Cats"|7.49|492.51
+"Across Islands and Oceans"|1.99|490.52
+"The Handbuilt Home: 34 Simple Stylish and Budget-Friendly Woodworking Projects for Every Room"|15.63|474.89
+"Fifty Places to Dive Before You Die: Diving Experts Share the World's Greatest Destinations"|16.47|458.42
+"The Greatest Hockey Stories Ever Told: The Finest Writers on Ice"|9.71|448.71
+"SuperFreakonomics"|3.79|444.92
+"The California Surf Project"|22.16|422.76
+"A Letter to My Dog: Notes to Our Best Friends"|16.47|406.29
+"How Children Succeed: Grit, Curiosity, and the Hidden Power of Character"|9.45|396.84
+"Underwater Dogs"|11.6|385.24
+"My Year in Meals"|16.91|368.33
+"Star Wars: The Ultimate Action Figure Collection"|21.38|346.95
+"Damaged: The Heartbreaking True Story of a Forgotten Child"|0.99|345.96
+"Outliers: The Story of Success|9.83|336.13
+### REJECTED ORDERS ###
+=== END CUSTOMER INFO ===
+
+=== BEGIN CUSTOMER INFO ===
+### BALANCE ###
+Customer name: Ying Zhan
+Customer ID number: 2
+Remaining credit balance after all purchases (a dollar amount): 1.5
+### SUCCESSFUL ORDERS ###
+"The History of Surfing"|31.5|33.5
+"How to Create a Mind: The Secret of Human Thought Revealed"|16.4|17.1
+"The Joy of Hate: How to Triumph over Whiners in the Age of Phony Outrage"|15.6|1.5
+### REJECTED ORDERS ###
+"Soul Surfer: A True Story of Faith, Family, and Fighting to Get Back on the Board"|7.99
+"Swimming Studies"|19.8
+=== END CUSTOMER INFO ===
+
+=== BEGIN CUSTOMER INFO ===
+### BALANCE ###
+Customer name: Sejong Yoon
+Customer ID number: 3
+Remaining credit balance after all purchases (a dollar amount): 2.01
+### SUCCESSFUL ORDERS ###
+"Soul Surfer"|7.99|2.01
+### REJECTED ORDERS ###
+"Hockey; The Math of the Game (Sports Illustrated Kids: Sports Math)"|7.95
+=== END CUSTOMER INFO ===
+
+=== BEGIN CUSTOMER INFO ===
+### BALANCE ###
+Customer name: Yuanzhen Gu
+Customer ID number: 4
+Remaining credit balance after all purchases (a dollar amount): 9.11
+### SUCCESSFUL ORDERS ###
+"The Immortal Life of Henrietta Lacks"|8.91|71.09
+"Following Atticus (P.S.)"|2.99|68.1
+"Stop Living In This Land. Go To The Everlasting World Of Happiness. Live There Forever."|7.19|60.91
+"365 Cats 2013 Page-A-Day Calendar"|9.66|51.25
+"Thomas Jefferson: The Art of Power"|18.98|32.27
+"Origami Fun Kit for Beginners (Dover Fun Kit)"|10.17|22.1
+"The Outpost: An Untold Story of American Valor"|12.99|9.11
+### REJECTED ORDERS ###
+=== END CUSTOMER INFO ===
+
+=== BEGIN CUSTOMER INFO ===
+### BALANCE ###
+Customer name: Zi Yan
+Customer ID number: 5
+Remaining credit balance after all purchases (a dollar amount): 67.4
+### SUCCESSFUL ORDERS ###
+"The Endurance: Shackleton's Legendary Antarctic Expedition"|21.29|78.71
+"Tasting Beer: An Insider's Guide to the World's Greatest Drink"|11.31|67.4
+### REJECTED ORDERS ###
+=== END CUSTOMER INFO ===
