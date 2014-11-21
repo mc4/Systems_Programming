@@ -3,6 +3,7 @@
  */
 
 #include <stdio.h>
+#include "bookorder.h"
 
 int main(int argc, char ** argv){
 
@@ -13,7 +14,5 @@ int main(int argc, char ** argv){
  	char * database   = argv[1];
 	char * bookOrders = argv[2];
 	char * categories = argv[3];
-
-
 
 }
