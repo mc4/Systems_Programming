@@ -16,12 +16,14 @@ struct Queue {
 	QueueNodePtr tail;	// enqueue here
 	int size;
 	pthread_mutex_t mutex;
+	pthread_cond_t  dataAvailable;
+	pthread_cond_t  spaceAvailable;
 };
 
 Queue * Qcreate();
 void enqueue(Queue *, void *);
 void * dequeue(Queue *);
-void * Qpeek(Queue *);
+void * const Qpeek(Queue *);
 int Qsize(Queue *);
 void Qdestroyer(Queue *);
 
@@ -76,38 +78,59 @@ void * dequeue(Queue * q){
 	return data;
 }
 
-/* looks at the  of the queue without changing it */
-/* TODO: implement this if necessary */
-void * Qpeek(Queue * q){
-	return NULL;
+/* looks at the head of the queue without changing it. 
+ * returns NULL if queue is empty;
+ */
+void * const Qpeek(Queue * q){
+	if(Qsize(q) == 0){
+		return NULL;
+	}
+
+	void * const value = &q->head;// = malloc(sizeof(struct QueueNode));
+	// value = q->head;
+
+	return value;
 }
 
 int Qsize(Queue * q){
 	return q->size;
 }
 
-/* dequeue frees nodes */
+/* this Q is still usable after calling destroyer */
+/* dequeue frees all the nodes */
 void Qdestroyer(Queue * q){
-	while(q->size > 0){
-		dequeue(q);
-	}
+	while(dequeue(q) != NULL);
 	pthread_mutex_destroy(&q->mutex);
 }
 
 int main(void){
+	int temp = 0;
+	int x = 0, y = 0, z = 0;
 	Queue * q = Qcreate();
 
-	enqueue(q, (void*)-1);
+	//enqueue(q, (void*)-1);
 	enqueue(q, (void*)1);
-	enqueue(q, (void*)-2223);
-	enqueue(q, (void*)3333);
+	enqueue(q, (void*)2);
+	enqueue(q, (void*)3);
 
-	int i = (int)dequeue(q);
-	int j = (int)dequeue(q);
-	int k = (int)dequeue(q);
 
-	printf("data is %d, %d, %d\n",i,j,k);
+	x = (int)Qpeek(q);
+	dequeue(q);
+	printf("data is %d, %d, %d\n",x,y,z);
 
-	Qdestroyer(q);
+	y = (int)Qpeek(q);
+	printf("data is %d, %d, %d\n",x,y,z);
+	dequeue(q);
+
+	//z = (int)Qpeek(q);
+	//printf("data is %d, %d, %d\n",x,y,z);
+
+	// int i = (int)dequeue(q);
+	// int j = (int)dequeue(q);
+	// int k = (int)dequeue(q);
+
+	//printf("data is %d, %d, %d\n",i,j,k);
+
+	Qdestroyer(q); 
 	return 0;
 }
