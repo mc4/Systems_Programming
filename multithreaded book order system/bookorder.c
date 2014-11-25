@@ -8,6 +8,7 @@
 
 /* hashtable global */
 CustomerPtr customers = NULL;
+// categories hash table
 
 char * substring( const char * word, int firstIndex, int length ){
 	char * s = (char *)malloc(sizeof(char) * (length + 1));
@@ -16,6 +17,9 @@ char * substring( const char * word, int firstIndex, int length ){
 	return s;
 }
 
+/*
+ * Creates a hash table for the customers given a customer database file
+ */
 void createCustomerDatabase(char * customerDatabase){
 
 	FILE * fp;
@@ -69,6 +73,14 @@ void printSearchResults() {
 	}
 }
 
+/*
+ * Creates and initializes queues for threads, spawns the threads (consumers),
+ * and hashes the queue into the Qtable hash table
+ */
+void createCategoryThreads( char * categories ) {
+
+}
+
 int main(int argc, char ** argv){
 
  	if(argc != 4){
@@ -76,11 +88,13 @@ int main(int argc, char ** argv){
  	}
 
  	char * database   = argv[1];
-	// char * bookOrders = argv[2];
-	// char * categories = argv[3];
+	char * bookOrders = argv[2];
+	char * categories = argv[3];
 
 	createCustomerDatabase(database);
 	printSearchResults();
+
+	createCategoryThreads(categories);
 
 	return 0;
 }
