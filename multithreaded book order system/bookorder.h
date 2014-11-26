@@ -8,6 +8,7 @@
 #include <pthread.h>
 #include <unistd.h>
 #include "uthash.h"
+#include "queue.c"
 
 /* circular linked list */
 typedef struct GoodOrders * goodOrdersPtr;
@@ -29,7 +30,7 @@ typedef struct BookOrder * BookOrderPtr;
 struct BookOrder {
 	char * bookTitle;
 	int customerID;
-	char * cateogry;
+	char * category;
 	float bookPrice;
 };
 
@@ -48,5 +49,6 @@ typedef struct Category * CategoryPtr;
 struct Category {
 	char * name;		        /* key */
 	QueuePtr queue;
+	pthread_t tid;		        /* stores the thread id */
 	UT_hash_handle hh;         /* makes this structure hashable */
 };

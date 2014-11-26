@@ -105,35 +105,35 @@ void Qdestroyer(QueuePtr q){
 	free(q);
 }
 
-int main(void){
-	int temp = 0;
-	int x = 0, y = 0, z = 0;
+// int main(void){
+// 	int temp = 0;
+// 	int x = 0, y = 0, z = 0;
 
-	QueuePtr q = Qcreate();
+// 	QueuePtr q = Qcreate();
 
-	//enqueue(q, (void*)-1);
-	enqueue(q, (void*)1);
-	enqueue(q, (void*)2);
-	enqueue(q, (void*)3);
+// 	//enqueue(q, (void*)-1);
+// 	enqueue(q, (void*)1);
+// 	enqueue(q, (void*)2);
+// 	enqueue(q, (void*)3);
 
 
-	// x = (int)Qpeek(q);
-	dequeue(q);
-	printf("data is %d, %d, %d\n",x,y,z);
+// 	// x = (int)Qpeek(q);
+// 	dequeue(q);
+// 	printf("data is %d, %d, %d\n",x,y,z);
 
-	// y = (int)Qpeek(q);
-	printf("data is %d, %d, %d\n",x,y,z);
-	dequeue(q);
+// 	// y = (int)Qpeek(q);
+// 	printf("data is %d, %d, %d\n",x,y,z);
+// 	dequeue(q);
 
-	//z = (int)Qpeek(q);
-	//printf("data is %d, %d, %d\n",x,y,z);
+// 	//z = (int)Qpeek(q);
+// 	//printf("data is %d, %d, %d\n",x,y,z);
 
-	// int i = (int)dequeue(q);
-	// int j = (int)dequeue(q);
-	// int k = (int)dequeue(q);
+// 	// int i = (int)dequeue(q);
+// 	// int j = (int)dequeue(q);
+// 	// int k = (int)dequeue(q);
 
-	//printf("data is %d, %d, %d\n",i,j,k);
+// 	//printf("data is %d, %d, %d\n",i,j,k);
 
-	Qdestroyer(q); 
-	return 0;
-}
+// 	Qdestroyer(q); 
+// 	return 0;
+// }

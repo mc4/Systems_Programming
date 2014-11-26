@@ -108,12 +108,12 @@ void printSearchResults() {
 
 	fp = fopen(bookOrders,"r");
 	if(!fp){
-		printf("file pointer error on %d. could not open file%s.\n", __LINE__, categories);
+		printf("file pointer error on %d. could not open file%s.\n", __LINE__, bookOrders);
 		exit(1);
 	}
 
 	while(fgets(line, sizeof(line), fp)){
-		BookOrderPtr tmpOrder = (BookOrderPtr) malloc(sizeof(struct BookOrders));
+		BookOrderPtr tmpOrder = (BookOrderPtr) malloc(sizeof(struct BookOrder));
 
 		/* first token is book title */
 		token = strtok(line, "|");
@@ -152,8 +152,15 @@ void printSearchResults() {
 	}
 
 	// close down consumers
+	/* set a cond var?? */
 
 	// wait on consumers to finish
+	CategoryPtr current, tmp;
+	// iterate through the queues and wait the threads attached to each queue to close
+	HASH_ITER(hh, Qtable, current, tmp) {
+		pthread_join(current->tid, NULL);
+	}
+
 	// print overall report ?
 
 	return 0;
@@ -196,11 +203,11 @@ void createCategoryThreads( char * categories ) {
 		if( line[lineLen-2] == '\n' || line[lineLen-2] == EOF ) {  // shouldn't be EOF, check anyway
 			name  = (char *) malloc(sizeof(char) * lineLen -1);
 			strncpy(name, line, (lineLen-1));
-			name[lineLen-2] '\0';
+			name[lineLen-2] = '\0';
 		} else {
 			name  = (char *) malloc(sizeof(char) * lineLen);
 			strncpy(name, line, (lineLen));
-			name[lineLen-1] '\0';  // redundant
+			name[lineLen-1] = '\0';  // redundant
 		}
 
 
@@ -212,7 +219,7 @@ void createCategoryThreads( char * categories ) {
 
 		// spawn consumer
 		pthread_t ignore;
-		pthread_create( &ignore, 0, consumer, tmpCat );
+		pthread_create( &tmpCat->tid, 0, consumer, tmpCat );
 
 	}
 }
@@ -230,9 +237,10 @@ int main(int argc, char ** argv){
 	createCustomerDatabase(database);
 	printSearchResults();
 
+	// make queues and spawn consumers
 	createCategoryThreads(categories);
 
-	// spawn consumer
+	// spawn producer
 	pthread_t ignore;
 	pthread_create( &ignore, 0, producer, bookOrders );
 
