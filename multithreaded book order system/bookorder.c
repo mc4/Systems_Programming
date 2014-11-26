@@ -89,6 +89,7 @@ void printSearchResults() {
  	/*
  	 * Consume and such
  	 */
+
  }
 
  /*
@@ -147,17 +148,15 @@ void printSearchResults() {
 		// Unlock Q
 		pthread_mutex_unlock(&Q->mutex);  // may need to change this (ie get rid of &)
 
-		// Signal consumer ... change to be more efficient
+	// Signal consumer ... change to be more efficient
 		pthread_cond_signal( &Q->dataAvailable );
 	}
 
-	// close down consumers
-	/* set a cond var?? */
-
-	// wait on consumers to finish
+	// close down consumers wait on consumers to finish
 	CategoryPtr current, tmp;
 	// iterate through the queues and wait the threads attached to each queue to close
 	HASH_ITER(hh, Qtable, current, tmp) {
+		current->isOpen = 0;
 		pthread_join(current->tid, NULL);
 	}
 
@@ -213,12 +212,12 @@ void createCategoryThreads( char * categories ) {
 
 		tmpCat->name = name;
 		tmpCat->queue = q;
+		tmpCat->isOpen = 1;      /* set category to open for processing */
 
 		// hash into Qtable
 		HASH_ADD_STR(Qtable, name, tmpCat);
 
 		// spawn consumer
-		pthread_t ignore;
 		pthread_create( &tmpCat->tid, 0, consumer, tmpCat );
 
 	}

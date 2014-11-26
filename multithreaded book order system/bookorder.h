@@ -50,5 +50,6 @@ struct Category {
 	char * name;		        /* key */
 	QueuePtr queue;
 	pthread_t tid;		        /* stores the thread id */
+	int isOpen;
 	UT_hash_handle hh;         /* makes this structure hashable */
 };
