@@ -8,7 +8,7 @@
 
 /* hashtable global */
 CustomerPtr customers = NULL;
-// categories hash table
+CategoryPtr Qtable = NULL;
 
 char * substring( const char * word, int firstIndex, int length ){
 	char * s = (char *)malloc(sizeof(char) * (length + 1));
@@ -67,6 +67,7 @@ void createCustomerDatabase(char * customerDatabase){
  * takes in a word count to check for searchAnd, ignores word counts if -1
  */
 void printSearchResults() {
+	
 	CustomerPtr current, tmp;
 	HASH_ITER(hh, customers, current, tmp) {
 		printf("%s | %d | %f \n", current->name, current->ID, current->balance );
@@ -74,11 +75,146 @@ void printSearchResults() {
 }
 
 /*
+ * Consumer thread
+ * processes the orders for the given category in the arg
+ * arg contains name of category and the queue
+ */
+ void * consumer( void * arg ) {
+ 	
+ 	CategoryPtr category = (CategoryPtr) arg;
+ 	/* declare more vars */
+
+ 	pthread_detach( pthread_self() );
+
+ 	/*
+ 	 * Consume and such
+ 	 */
+ }
+
+ /*
+  * Producer thread
+  * reads the book orders file and processes the orders,
+  * placing them into queues based on the category
+  */
+  void * producer( void * arg ) {
+  	char * bookOrders = (char *) arg;
+	char line[MAXLINELENGTH];
+  	char * token;
+  	FILE * fp;
+  	/* declare more vars */
+
+  	pthread_detach( pthread_self() );
+
+
+	fp = fopen(bookOrders,"r");
+	if(!fp){
+		printf("file pointer error on %d. could not open file%s.\n", __LINE__, categories);
+		exit(1);
+	}
+
+	while(fgets(line, sizeof(line), fp)){
+		BookOrderPtr tmpOrder = (BookOrderPtr) malloc(sizeof(struct BookOrders));
+
+		/* first token is book title */
+		token = strtok(line, "|");
+		tmpOrder->bookTitle = substring(token, 1, (strlen(token) - 2));
+
+		/* second token is price */
+		token = strtok(NULL, "|");
+		float price = atof(token);
+		tmpOrder->bookPrice = price;
+
+		/* third token is the customer ID */
+		token = strtok(NULL, "|");
+		int customerID = atoi(token);  //converts string to an integeger
+		tmpOrder->customerID = customerID;
+
+		/* fourth token is category */
+		token = strtok(line, "|");
+		tmpOrder->category = substring(token, 0, strlen(token));
+
+		// Find Q in Qtable by category
+		CategoryPtr categoryData;
+		HASH_FIND_STR(Qtable, tmpOrder->category, categoryData);
+		QueuePtr Q = categoryData->queue;
+
+		// Obtain lock for Q
+		pthread_mutex_lock(&Q->mutex);  // may need to change this (ie get rid of &)
+
+		// Put order into Q
+		enqueue(Q, tmpOrder);
+
+		// Unlock Q
+		pthread_mutex_unlock(&Q->mutex);  // may need to change this (ie get rid of &)
+
+		// Signal consumer ... change to be more efficient
+		pthread_cond_signal( &Q->dataAvailable );
+	}
+
+	// close down consumers
+
+	// wait on consumers to finish
+	// print overall report ?
+
+	return 0;
+  }
+
+/*
  * Creates and initializes queues for threads, spawns the threads (consumers),
  * and hashes the queue into the Qtable hash table
  */
 void createCategoryThreads( char * categories ) {
+	
+	FILE * fp;
+	char line[MAXLINELENGTH];
 
+	fp = fopen(categories,"r");
+	if(!fp){
+		printf("file pointer error on %d. could not open file%s.\n", __LINE__, categories);
+		exit(1);
+	}
+
+
+	while(fgets(line, sizeof(line), fp)){
+		int lineLen = strlen(line);
+		if(lineLen <= 0)  continue;  // if empty line continue
+		
+		// upper case the characters
+		int i = lineLen -1;
+		for( ; i >= 0; i-- ) {
+			toupper( line[i] );
+		}
+
+		// create new queue and init
+		QueuePtr q = Qcreate();
+
+		// create struct
+		CategoryPtr tmpCat  = (CategoryPtr) malloc(sizeof(struct Category));		
+		
+		char * name;
+		// check if line has a new line or EOF at end, if so trim
+		if( line[lineLen-2] == '\n' || line[lineLen-2] == EOF ) {  // shouldn't be EOF, check anyway
+			name  = (char *) malloc(sizeof(char) * lineLen -1);
+			strncpy(name, line, (lineLen-1));
+			name[lineLen-2] '\0';
+		} else {
+			name  = (char *) malloc(sizeof(char) * lineLen);
+			strncpy(name, line, (lineLen));
+			name[lineLen-1] '\0';  // redundant
+		}
+
+
+		tmpCat->name = name;
+		tmpCat->queue = q;
+
+		// hash into Qtable
+		HASH_ADD_STR(Qtable, name, tmpCat);
+
+		// spawn consumer
+		pthread_t ignore;
+		pthread_create( &ignore, 0, consumer, tmpCat );
+
+	}
 }
 
 int main(int argc, char ** argv){
@@ -95,6 +231,10 @@ int main(int argc, char ** argv){
 	printSearchResults();
 
 	createCategoryThreads(categories);
+
+	// spawn consumer
+	pthread_t ignore;
+	pthread_create( &ignore, 0, producer, bookOrders );
 
 	return 0;
 }

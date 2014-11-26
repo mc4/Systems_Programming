@@ -9,7 +9,7 @@ struct QueueNode {
 };
 
 /* First In First Out */
-typedef struct Queue Queue; 
+typedef struct Queue * QueuePtr; 
 struct Queue {
 	int isOpen;			// flag for when the producer is done
 	QueueNodePtr head;	// dequeue here
@@ -17,18 +17,18 @@ struct Queue {
 	int size;
 	pthread_mutex_t mutex;
 	pthread_cond_t  dataAvailable;
-	pthread_cond_t  spaceAvailable;
+	// pthread_cond_t  spaceAvailable;
 };
 
-Queue * Qcreate();
-void enqueue(Queue *, void *);
-void * dequeue(Queue *);
-void * const Qpeek(Queue *);
-int Qsize(Queue *);
-void Qdestroyer(Queue *);
+QueuePtr Qcreate();
+void enqueue(QueuePtr, void *);
+void * dequeue(QueuePtr);
+void * const Qpeek(QueuePtr);
+int Qsize(QueuePtr);
+void Qdestroyer(QueuePtr);
 
-Queue * Qcreate(){
-	Queue * q = malloc(sizeof(Queue));
+QueuePtr Qcreate(){
+	QueuePtr q = malloc(sizeof(struct Queue));
 	if(!q) exit(1);
 	q->isOpen = 1;
 	q->head   = NULL;
@@ -38,7 +38,7 @@ Queue * Qcreate(){
 	return q;
 }
 
-void enqueue(Queue * q, void * data){
+void enqueue(QueuePtr q, void * data){
 	pthread_mutex_lock(&q->mutex);
 	QueueNodePtr queueNode = malloc(sizeof(struct QueueNode));
 	queueNode->data = data;
@@ -56,7 +56,7 @@ void enqueue(Queue * q, void * data){
 }
 
 /* returns the data from the  */
-void * dequeue(Queue * q){
+void * dequeue(QueuePtr q){
 	pthread_mutex_lock(&q->mutex);
 
 	if(q->size == 0){
@@ -81,7 +81,7 @@ void * dequeue(Queue * q){
 /* looks at the head of the queue without changing it. 
  * returns NULL if queue is empty;
  */
-void * const Qpeek(Queue * q){
+void * const Qpeek(QueuePtr q){
 	if(Qsize(q) == 0){
 		return NULL;
 	}
@@ -92,23 +92,24 @@ void * const Qpeek(Queue * q){
 	return value;
 }
 
-int Qsize(Queue * q){
+int Qsize(QueuePtr q){
 	return q->size;
 }
 
 /* this Q is still usable after calling destroyer */
 /* dequeue frees all the nodes */
 /* NOTE: queue can still be used after this. make sure to no */
-void Qdestroyer(Queue * q){
+void Qdestroyer(QueuePtr q){
 	while(dequeue(q) != NULL);
 	pthread_mutex_destroy(&q->mutex);
+	free(q);
 }
 
 int main(void){
 	int temp = 0;
 	int x = 0, y = 0, z = 0;
 
-	Queue * q = Qcreate();
+	QueuePtr q = Qcreate();
 
 	//enqueue(q, (void*)-1);
 	enqueue(q, (void*)1);
@@ -116,11 +117,11 @@ int main(void){
 	enqueue(q, (void*)3);
 
 
-	x = (int)Qpeek(q);
+	// x = (int)Qpeek(q);
 	dequeue(q);
 	printf("data is %d, %d, %d\n",x,y,z);
 
-	y = (int)Qpeek(q);
+	// y = (int)Qpeek(q);
 	printf("data is %d, %d, %d\n",x,y,z);
 	dequeue(q);
 

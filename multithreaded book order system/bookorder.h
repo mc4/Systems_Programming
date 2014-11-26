@@ -10,33 +10,43 @@
 #include "uthash.h"
 
 /* circular linked list */
-typedef struct goodOrders * goodOrdersPtr;
-struct goodOrders {
+typedef struct GoodOrders * goodOrdersPtr;
+struct GoodOrders {
 	char * bookTitle;
 	float balance; 
 	goodOrdersPtr tail;
 }; 
 
 /* circular linked list */
-typedef struct badOrders * badOrdersPtr;
-struct badOrders {
+typedef struct BadOrders * badOrdersPtr;
+struct BadOrders {
 	char * bookTitle;
 	float bookPrice;
 	badOrdersPtr tail;
 };
 
-typedef struct BookOrder{
+typedef struct BookOrder * BookOrderPtr;
+struct BookOrder {
 	char * bookTitle;
 	int customerID;
 	char * cateogry;
 	float bookPrice;
-}BookOrder;
+};
 
 typedef struct Customer * CustomerPtr;
 struct Customer {
+ 	int ID;			   /* key for hashing */
+ 	goodOrdersPtr goodOrders;
+ 	badOrdersPtr badOrders;
  	char * name;
  	float balance;
- 	int ID;			   /* key for hashing */
  	UT_hash_handle hh;         /* makes this structure hashable */
  	pthread_mutex_t mutex;
+};
+
+typedef struct Category * CategoryPtr;
+struct Category {
+	char * name;		        /* key */
+	QueuePtr queue;
+	UT_hash_handle hh;         /* makes this structure hashable */
 };
