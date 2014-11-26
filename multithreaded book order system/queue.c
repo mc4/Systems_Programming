@@ -98,6 +98,7 @@ int Qsize(Queue * q){
 
 /* this Q is still usable after calling destroyer */
 /* dequeue frees all the nodes */
+/* NOTE: queue can still be used after this. make sure to no */
 void Qdestroyer(Queue * q){
 	while(dequeue(q) != NULL);
 	pthread_mutex_destroy(&q->mutex);
@@ -106,6 +107,7 @@ void Qdestroyer(Queue * q){
 int main(void){
 	int temp = 0;
 	int x = 0, y = 0, z = 0;
+
 	Queue * q = Qcreate();
 
 	//enqueue(q, (void*)-1);
