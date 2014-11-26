@@ -15,7 +15,7 @@ typedef struct GoodOrders * goodOrdersPtr;
 struct GoodOrders {
 	char * bookTitle;
 	float balance; 
-	goodOrdersPtr tail;
+	goodOrdersPtr next;
 }; 
 
 /* circular linked list */
@@ -23,7 +23,7 @@ typedef struct BadOrders * badOrdersPtr;
 struct BadOrders {
 	char * bookTitle;
 	float bookPrice;
-	badOrdersPtr tail;
+	badOrdersPtr next;
 };
 
 typedef struct BookOrder * BookOrderPtr;
@@ -37,8 +37,8 @@ struct BookOrder {
 typedef struct Customer * CustomerPtr;
 struct Customer {
  	int ID;			   /* key for hashing */
- 	goodOrdersPtr goodOrders;
- 	badOrdersPtr badOrders;
+ 	goodOrdersPtr goodOrdersTail;
+ 	badOrdersPtr badOrdersTail;
  	char * name;
  	float balance;
  	UT_hash_handle hh;         /* makes this structure hashable */
