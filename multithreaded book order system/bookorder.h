@@ -2,11 +2,11 @@
  * Mark Conley && Michael Newman
  */
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h> 
 #include <limits.h>
 #include <pthread.h>
-#include <unistd.h>
 #include "uthash.h"
 #include "queue.c"
 
