@@ -245,7 +245,7 @@ void createCategoryThreads( char * categories ) {
 		// upper case the characters
 		int i = lineLen -1;
 		for( ; i >= 0; i-- ) {
-			toupper( line[i] );
+			line[i] = toupper( line[i] );
 		}
 
 		// create new queue and init
