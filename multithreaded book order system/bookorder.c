@@ -109,7 +109,7 @@ void printSearchResults() {
  			pthread_mutex_lock( &customer->mutex );
 
  			// check if price of order greater than balance
- 			if( order->bookPrice > customer->balance ) {
+ 			if( order->bookPrice > customer->balance ) {	// can't process order, not enough $
  				badOrdersPtr tmpBad = ( badOrdersPtr ) malloc(sizeof(struct BadOrders));
  				tmpBad->bookTitle = order->bookTitle;
  				tmpBad->bookPrice = order->bookPrice;
@@ -122,7 +122,7 @@ void printSearchResults() {
 					customer->badOrdersTail->next = tmpBad;
 					customer->badOrdersTail = tmpBad;
 				}
- 			} else {
+ 			} else {  // engough money, process order
  				goodOrdersPtr tmpGood = ( goodOrdersPtr ) malloc(sizeof(struct GoodOrders));
  				tmpGood->bookTitle = order->bookTitle;
  				tmpGood->bookPrice = order->bookPrice;
@@ -211,13 +211,15 @@ void printSearchResults() {
 
 	// close down consumers wait on consumers to finish
 	CategoryPtr current, tmp;
+	
 	// iterate through the queues and wait the threads attached to each queue to close
 	HASH_ITER(hh, Qtable, current, tmp) {
 		current->isOpen = 0;
 		pthread_join(current->tid, NULL);
 	}
 
-	// print overall report ?
+	// print final report
+	printFinalReport();
 
 	return 0;
   }
@@ -245,7 +247,7 @@ void createCategoryThreads( char * categories ) {
 		// upper case the characters
 		int i = lineLen -1;
 		for( ; i >= 0; i-- ) {
-			toupper( line[i] );
+			line[i] = toupper( line[i] );
 		}
 
 		// create new queue and init
