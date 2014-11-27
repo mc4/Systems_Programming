@@ -37,7 +37,7 @@ QueuePtr Qcreate(){
 }
 
 void enqueue(QueuePtr q, void * data){
-	pthread_mutex_lock(&q->mutex);
+	// pthread_mutex_lock(&q->mutex);
 	QueueNodePtr queueNode = malloc(sizeof(struct QueueNode));
 	queueNode->data = data;
 	queueNode->next = NULL;
@@ -50,7 +50,7 @@ void enqueue(QueuePtr q, void * data){
 		q->tail = queueNode;
 	}
 	q->size++;
-	pthread_mutex_unlock(&q->mutex);
+	// pthread_mutex_unlock(&q->mutex);
 }
 
 /* returns the data from the  */

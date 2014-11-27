@@ -7,6 +7,7 @@
 #include <stdlib.h> 
 #include <limits.h>
 #include <pthread.h>
+ #include <unistd.h>
 #include "uthash.h"
 #include "queue.c"
 
@@ -52,6 +53,7 @@ struct Category {
 	QueuePtr queue;
 	pthread_t tid;		        /* stores the thread id */
 	int isOpen;
+	int isProcessing;
 	UT_hash_handle hh;         /* makes this structure hashable */
 };
 

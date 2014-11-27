@@ -5,6 +5,8 @@
 #include "bookorder.h"
 
 #define MAXLINELENGTH 1024
+#define KNRM  "\x1B[0m"
+#define KCYN  "\x1B[36m"
 
 /* hashtable global */
 CustomerPtr customers = NULL;
@@ -80,24 +82,26 @@ void printSearchResults() {
  * arg contains name of category and the queue
  */
  void * consumer( void * arg ) {
- 	
  	CategoryPtr category = (CategoryPtr) arg;
  	QueuePtr Q = category->queue;
  	char * catName = category->name;
- 	/* declare more vars */
+
+ 	category->isProcessing = 0;
 
  	pthread_detach( pthread_self() );
 
  	// process while the category is still set to be open
- 	while( category->isOpen ) {
+ 	while( category->isOpen || Q->size != 0 ) {
  		// lock the queue
  		pthread_mutex_lock( &Q->mutex );
- 		while( Q->size == 0 ) {  // wait when there is nothing in the queue to process
- 			printf("%s consumer waits because queue is empty.\n", catName);
+ 		while( Q->size == 0 && category->isOpen  ) {  // wait when there is nothing in the queue to process
+ 			category->isProcessing = 0;
+ 			printf("%s%s consumer waits because queue is empty.%s\n", KCYN, catName, KNRM);
  			pthread_cond_wait( &Q->dataAvailable, &Q->mutex );
  		}
 
- 		printf("%s consumer resumes because queue has order(s) ready for processing\n", catName);
+ 		printf("%s%s consumer resumes because queue has order(s) ready for processing%s\n", KCYN, catName, KNRM);
+ 		category->isProcessing = 1;
 
  		BookOrderPtr order;
  		while( (order = (BookOrderPtr) dequeue(Q)) != NULL ) {   // while there is something in the queue to process
@@ -144,6 +148,7 @@ void printSearchResults() {
  		}
  		// pthread_cond_signal( &Q->dataAvailable );		// shout at consumer
  		pthread_mutex_unlock( &Q->mutex );		// unlock mutex for the queue
+ 		category->isProcessing = 0;
  	}
 
  	return 0;
@@ -159,7 +164,6 @@ void printSearchResults() {
 	char line[MAXLINELENGTH];
   	char * token;
   	FILE * fp;
-  	/* declare more vars */
 
   	pthread_detach( pthread_self() );
 
@@ -188,24 +192,29 @@ void printSearchResults() {
 		tmpOrder->customerID = customerID;
 
 		/* fourth token is category */
-		token = strtok(line, "|");
-		tmpOrder->category = substring(token, 0, strlen(token));
+		token = strtok(NULL, "|\n");
+		tmpOrder->category = malloc(sizeof(char) * strlen(token));
+		strcpy(tmpOrder->category, token);
 
 		// Find Q in Qtable by category
 		CategoryPtr categoryData;
 		HASH_FIND_STR(Qtable, tmpOrder->category, categoryData);
+		if(categoryData == NULL) {
+			printf("error\n");
+			return 0;
+		}
 		QueuePtr Q = categoryData->queue;
 
 		// Obtain lock for Q
-		pthread_mutex_lock(&Q->mutex);  // may need to change this (ie get rid of &)
+		pthread_mutex_lock(&Q->mutex);
 
 		// Put order into Q
 		enqueue(Q, tmpOrder);
 
 		// Unlock Q
-		pthread_mutex_unlock(&Q->mutex);  // may need to change this (ie get rid of &)
+		pthread_mutex_unlock(&Q->mutex);
 
-// Signal consumer ... change to be more efficient
+		// Signal consumer ... change to be more efficient
 		pthread_cond_signal( &Q->dataAvailable );
 	}
 
@@ -215,7 +224,11 @@ void printSearchResults() {
 	// iterate through the queues and wait the threads attached to each queue to close
 	HASH_ITER(hh, Qtable, current, tmp) {
 		current->isOpen = 0;
+		pthread_cond_signal( &current->queue->dataAvailable );
 		pthread_join(current->tid, NULL);
+		while(current->isProcessing) {
+			sleep(1);
+		}
 	}
 
 	// print final report
@@ -257,28 +270,31 @@ void createCategoryThreads( char * categories ) {
 		CategoryPtr tmpCat  = (CategoryPtr) malloc(sizeof(struct Category));		
 		
 		char * name;
-		// check if line has a new line or EOF at end, if so trim
-		if( line[lineLen-2] == '\n' || line[lineLen-2] == EOF ) {  // shouldn't be EOF, check anyway
-			name  = (char *) malloc(sizeof(char) * lineLen -1);
-			strncpy(name, line, (lineLen-1));
-			name[lineLen-2] = '\0';
-		} else {
-			name  = (char *) malloc(sizeof(char) * lineLen);
-			strncpy(name, line, (lineLen));
-			name[lineLen-1] = '\0';  // redundant
-		}
+		name = strtok(line, "\n");
+		name = substring(name, 0, strlen(name));
+		
+		// // check if line has a new line or EOF at end, if so trim
+		// if( line[lineLen-2] == '\n' || line[lineLen-2] == EOF ) {  // shouldn't be EOF, check anyway
+		// 	name  = (char *) malloc(sizeof(char) * lineLen -1);
+		// 	strncpy(name, line, (lineLen-1));
+		// 	name[lineLen-2] = '\0';
+		// } else {
+		// 	name  = (char *) malloc(sizeof(char) * lineLen);
+		// 	strncpy(name, line, (lineLen));
+		// 	name[lineLen-1] = '\0';  // redundant
+		// }
 
 
 		tmpCat->name = name;
 		tmpCat->queue = q;
 		tmpCat->isOpen = 1;      /* set category to open for processing */
+		tmpCat->isProcessing = 0;
 
 		// hash into Qtable
 		HASH_ADD_STR(Qtable, name, tmpCat);
 
 		// spawn consumer
 		pthread_create( &tmpCat->tid, 0, consumer, tmpCat );
-
 	}
 }
 
@@ -306,7 +322,7 @@ void printFinalReport(){
 			goodOrdersPtr goodPtr = current->goodOrdersTail->next; //goodPtr = head of CLL
 
 			do{
-				fprintf(fp, "\"%s\"|%f|%f\n", goodPtr->bookTitle, goodPtr->bookPrice, goodPtr->balance);
+				fprintf(fp, "\"%s\"|%.2f|%.2f\n", goodPtr->bookTitle, goodPtr->bookPrice, goodPtr->balance);
 				goodPtr = goodPtr->next;	
 			}while(goodPtr != current->goodOrdersTail);	
 			goodPtr = NULL;
@@ -316,7 +332,7 @@ void printFinalReport(){
 		if(current->badOrdersTail != NULL){
 			badOrdersPtr badPtr = current->badOrdersTail->next; //head of CLL
 			do{
-				fprintf(fp, "\"%s\"|%f\n", badPtr->bookTitle, badPtr->bookPrice);
+				fprintf(fp, "\"%s\"|%.2f\n", badPtr->bookTitle, badPtr->bookPrice);
 				badPtr = badPtr->next;	
 			}while(badPtr != current->badOrdersTail);
 			badPtr = NULL;
@@ -330,6 +346,7 @@ int main(int argc, char ** argv){
 
  	if(argc != 4){
  		printf("incorrect number of arguments\n");
+ 		return 0;
  	}
 
  	char * database   = argv[1];
@@ -337,7 +354,7 @@ int main(int argc, char ** argv){
 	char * categories = argv[3];
 
 	createCustomerDatabase(database);
-	printSearchResults();
+	// printSearchResults();
 
 	// make queues and spawn consumers
 	createCategoryThreads(categories);
@@ -345,6 +362,5 @@ int main(int argc, char ** argv){
 	// spawn producer
 	pthread_t ignore;
 	pthread_create( &ignore, 0, producer, bookOrders );
-
-	return 0;
+	pthread_exit(0);
 }
