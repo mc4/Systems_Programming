@@ -223,6 +223,50 @@ void createCategoryThreads( char * categories ) {
 	}
 }
 
+/* prints the final report to a file named "finalreport.txt" */
+void printFinalReport(){
+
+	FILE * fp;
+
+	//check to see if final report exist
+	fp = fopen("finalreport.txt", "w");
+	if(fp == NULL){
+		printf("error opening file on line %d in file %s", __LINE__, __FILE__);
+		exit(1);
+	}
+
+	CustomerPtr current, tmp;
+	HASH_ITER(hh, customers, current, tmp){
+		fprintf(fp, "=== BEGIN CUSTOMER INFO ===\n");
+		fprintf(fp, "### BALANCE ###\n");
+		fprintf(fp, "Customer name: %s\n", current->name);
+		fprintf(fp, "Customer id number: %d\n", current->ID);
+		fprintf(fp, "Remaining credit balance after all purchases (a dollar amount): %.2f\n", current->balance);
+		fprintf(fp, "### SUCCESSFUL ORDERS ###\n");
+		if(current->goodOrdersTail != NULL){
+			goodOrdersPtr goodPtr = current->goodOrdersTail->next; //goodPtr = head of CLL
+
+			do{
+				fprintf(fp, "\"%s\"|%f|%f\n", goodPtr->bookTitle, goodPtr->bookPrice, goodPtr->balance);
+				goodPtr = goodPtr->next;	
+			}while(goodPtr != current->goodOrdersTail);	
+			goodPtr = NULL;
+		}
+
+		fprintf(fp, "### REJECTED ORDERS ###\n");
+		if(current->badOrdersTail != NULL){
+			badOrdersPtr badPtr = current->badOrdersTail->next; //head of CLL
+			do{
+				fprintf(fp, "\"%s\"|%f\n", badPtr->bookTitle, badPtr->bookPrice);
+				badPtr = badPtr->next;	
+			}while(badPtr != current->badOrdersTail);
+			badPtr = NULL;
+		}	
+		fprintf(fp, "=== END CUSTOMER INFO ===\n\n");
+	}
+	fclose(fp);	
+}
+
 int main(int argc, char ** argv){
 
  	if(argc != 4){
