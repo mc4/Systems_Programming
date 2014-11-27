@@ -19,6 +19,14 @@ char * substring( const char * word, int firstIndex, int length ){
 	return s;
 }
 
+void QtableDestroyer(){
+	CategoryPtr current, tmp;
+	// iterate through the queues and destroy it
+	HASH_ITER(hh, Qtable, current, tmp){
+		Qdestroyer(current->queue);
+	}
+}
+
 /*
  * Creates a hash table for the customers given a customer database file
  */
@@ -82,6 +90,7 @@ void printSearchResults() {
  * arg contains name of category and the queue
  */
  void * consumer( void * arg ) {
+ 	
  	CategoryPtr category = (CategoryPtr) arg;
  	QueuePtr Q = category->queue;
  	char * catName = category->name;
@@ -295,6 +304,7 @@ void createCategoryThreads( char * categories ) {
 
 		// spawn consumer
 		pthread_create( &tmpCat->tid, 0, consumer, tmpCat );
+
 	}
 }
 
