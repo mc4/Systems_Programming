@@ -82,14 +82,71 @@ void printSearchResults() {
  void * consumer( void * arg ) {
  	
  	CategoryPtr category = (CategoryPtr) arg;
+ 	QueuePtr Q = category->queue;
+ 	char * catName = category->name;
  	/* declare more vars */
 
  	pthread_detach( pthread_self() );
 
- 	/*
- 	 * Consume and such
- 	 */
+ 	// process while the category is still set to be open
+ 	while( category->isOpen ) {
+ 		// lock the queue
+ 		pthread_mutex_lock( &Q->mutex );
+ 		while( Q->size == 0 ) {  // wait when there is nothing in the queue to process
+ 			printf("%s consumer waits because queue is empty.\n", catName);
+ 			pthread_cond_wait( &Q->dataAvailable, &Q->mutex );
+ 		}
 
+ 		printf("%s consumer resumes because queue has order(s) ready for processing\n", catName);
+
+ 		BookOrderPtr order;
+ 		while( (order = (BookOrderPtr) dequeue(Q)) != NULL ) {   // while there is something in the queue to process
+ 			CustomerPtr customer;
+ 			// find customer from order
+ 			HASH_FIND_INT( customers, &order->customerID,  customer);
+
+ 			// lock mutex for customer
+ 			pthread_mutex_lock( &customer->mutex );
+
+ 			// check if price of order greater than balance
+ 			if( order->bookPrice > customer->balance ) {
+ 				badOrdersPtr tmpBad = ( badOrdersPtr ) malloc(sizeof(struct BadOrders));
+ 				tmpBad->bookTitle = order->bookTitle;
+ 				tmpBad->bookPrice = order->bookPrice;
+ 				
+ 				if( customer->badOrdersTail == NULL ) {
+ 					tmpBad->next = tmpBad;
+ 					customer->badOrdersTail = tmpBad;
+ 				} else {
+					tmpBad->next = customer->badOrdersTail->next;
+					customer->badOrdersTail->next = tmpBad;
+					customer->badOrdersTail = tmpBad;
+				}
+ 			} else {
+ 				goodOrdersPtr tmpGood = ( goodOrdersPtr ) malloc(sizeof(struct GoodOrders));
+ 				tmpGood->bookTitle = order->bookTitle;
+ 				tmpGood->bookPrice = order->bookPrice;
+ 				customer->balance = customer->balance - order->bookPrice;
+ 				tmpGood->balance = customer->balance;
+
+ 				if( customer->goodOrdersTail == NULL ) {
+ 					tmpGood->next = tmpGood;
+ 					customer->goodOrdersTail = tmpGood;
+ 				} else {
+ 					tmpGood->next = customer->goodOrdersTail->next;
+ 					customer->goodOrdersTail->next = tmpGood;
+ 					customer->goodOrdersTail = tmpGood;
+ 				}
+ 			}
+
+ 			// unlock mutex for customer
+ 			pthread_mutex_unlock( &customer->mutex );
+ 		}
+ 		// pthread_cond_signal( &Q->dataAvailable );		// shout at consumer
+ 		pthread_mutex_unlock( &Q->mutex );		// unlock mutex for the queue
+ 	}
+
+ 	return 0;
  }
 
  /*
@@ -148,7 +205,7 @@ void printSearchResults() {
 		// Unlock Q
 		pthread_mutex_unlock(&Q->mutex);  // may need to change this (ie get rid of &)
 
-	// Signal consumer ... change to be more efficient
+// Signal consumer ... change to be more efficient
 		pthread_cond_signal( &Q->dataAvailable );
 	}
 

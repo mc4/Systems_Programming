@@ -11,7 +11,6 @@ struct QueueNode {
 /* First In First Out */
 typedef struct Queue * QueuePtr; 
 struct Queue {
-	int isOpen;			// flag for when the producer is done
 	QueueNodePtr head;	// dequeue here
 	QueueNodePtr tail;	// enqueue here
 	int size;
@@ -30,7 +29,6 @@ void Qdestroyer(QueuePtr);
 QueuePtr Qcreate(){
 	QueuePtr q = malloc(sizeof(struct Queue));
 	if(!q) exit(1);
-	q->isOpen = 1;
 	q->head   = NULL;
 	q->tail   = NULL;
 	q->size   = 0;
@@ -57,10 +55,10 @@ void enqueue(QueuePtr q, void * data){
 
 /* returns the data from the  */
 void * dequeue(QueuePtr q){
-	pthread_mutex_lock(&q->mutex);
+	// pthread_mutex_lock(&q->mutex);
 
 	if(q->size == 0){
-		pthread_mutex_unlock(&q->mutex);
+		// pthread_mutex_unlock(&q->mutex);
 		return NULL;
 	}
 
@@ -74,7 +72,7 @@ void * dequeue(QueuePtr q){
 	}
 
 	q->size--;
-  	pthread_mutex_unlock(&q->mutex);
+  	// pthread_mutex_unlock(&q->mutex);
 	return data;
 }
 

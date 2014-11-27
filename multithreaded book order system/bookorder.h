@@ -15,6 +15,7 @@ typedef struct GoodOrders * goodOrdersPtr;
 struct GoodOrders {
 	char * bookTitle;
 	float balance; 
+	float bookPrice;
 	goodOrdersPtr next;
 }; 
 
