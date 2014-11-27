@@ -18,13 +18,11 @@ char * substring( const char * word, int firstIndex, int length ){
 }
 
 void QtableDestroyer(){
-
 	CategoryPtr current, tmp;
 	// iterate through the queues and destroy it
-	HASH_ITER(hh, Qtable, current, tmp) {
+	HASH_ITER(hh, Qtable, current, tmp){
 		Qdestroyer(current->queue);
 	}
-
 }
 
 /*
@@ -355,7 +353,7 @@ int main(int argc, char ** argv){
 	// spawn producer
 	pthread_t ignore;
 	pthread_create( &ignore, 0, producer, bookOrders );
-	
-	
+
+
 	return 0;
 }
