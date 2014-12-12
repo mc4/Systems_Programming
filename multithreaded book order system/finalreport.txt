@@ -4,18 +4,18 @@ Customer name: Brian Russell
 Customer id number: 1
 Remaining credit balance after all purchases (a dollar amount): 336.13
 ### SUCCESSFUL ORDERS ###
-"I Could Pee on This: And Other Poems by Cats"|7.49|492.51
-"Across Islands and Oceans"|1.99|490.52
+"Across Islands and Oceans"|1.99|498.01
+"I Could Pee on This: And Other Poems by Cats"|7.49|490.52
 "The Handbuilt Home: 34 Simple Stylish and Budget-Friendly Woodworking Projects for Every Room"|15.63|474.89
 "Fifty Places to Dive Before You Die: Diving Experts Share the World's Greatest Destinations"|16.47|458.42
 "The Greatest Hockey Stories Ever Told: The Finest Writers on Ice"|9.71|448.71
 "SuperFreakonomics"|3.79|444.92
-"A Letter to My Dog: Notes to Our Best Friends"|16.47|428.45
-"Underwater Dogs"|11.60|416.85
-"How Children Succeed: Grit, Curiosity, and the Hidden Power of Character"|9.45|407.40
-"My Year in Meals"|16.91|390.49
-"Star Wars: The Ultimate Action Figure Collection"|21.38|369.11
-"The California Surf Project"|22.16|346.95
+"The California Surf Project"|22.16|422.76
+"A Letter to My Dog: Notes to Our Best Friends"|16.47|406.29
+"How Children Succeed: Grit, Curiosity, and the Hidden Power of Character"|9.45|396.84
+"Underwater Dogs"|11.60|385.24
+"My Year in Meals"|16.91|368.33
+"Star Wars: The Ultimate Action Figure Collection"|21.38|346.95
 "Damaged: The Heartbreaking True Story of a Forgotten Child"|0.99|345.96
 ### REJECTED ORDERS ###
 === END CUSTOMER INFO ===
@@ -49,12 +49,12 @@ Customer name: Yuanzhen Gu
 Customer id number: 4
 Remaining credit balance after all purchases (a dollar amount): 9.11
 ### SUCCESSFUL ORDERS ###
-"Following Atticus (P.S.)"|2.99|77.01
-"The Immortal Life of Henrietta Lacks"|8.91|68.10
+"The Immortal Life of Henrietta Lacks"|8.91|71.09
+"Following Atticus (P.S.)"|2.99|68.10
 "Stop Living In This Land. Go To The Everlasting World Of Happiness. Live There Forever."|7.19|60.91
 "365 Cats 2013 Page-A-Day Calendar"|9.66|51.25
-"Origami Fun Kit for Beginners (Dover Fun Kit)"|10.17|41.08
-"Thomas Jefferson: The Art of Power"|18.98|22.10
+"Thomas Jefferson: The Art of Power"|18.98|32.27
+"Origami Fun Kit for Beginners (Dover Fun Kit)"|10.17|22.10
 ### REJECTED ORDERS ###
 === END CUSTOMER INFO ===
 
