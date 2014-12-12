@@ -24,6 +24,37 @@ void QtableDestroyer(){
 	// iterate through the queues and destroy it
 	HASH_ITER(hh, Qtable, current, tmp){
 		Qdestroyer(current->queue);
+		pthread_mutex_destroy(&current->queue->mutex);
+	}
+}
+
+void customersDestroyer(){
+	CustomerPtr current, tmp;
+	goodOrdersPtr g;
+	badOrdersPtr b;
+	// iterate through the queues and destroy it
+	HASH_ITER(hh, customers, current, tmp){
+		if(current->goodOrdersTail != NULL){
+			goodOrdersPtr goodPtr = current->goodOrdersTail->next; //goodPtr = head of CLL
+			do{
+				g = goodPtr;
+				free(g);
+				goodPtr = goodPtr->next;	
+			}while(goodPtr != current->goodOrdersTail);	
+			goodPtr = NULL;
+		}
+
+		if(current->badOrdersTail != NULL){
+			badOrdersPtr badPtr = current->badOrdersTail->next; //head of CLL
+			do{
+				b = badPtr;
+				free(b);
+				badPtr = badPtr->next;	
+			}while(badPtr != current->badOrdersTail);
+			badPtr = NULL;
+		}
+		free(current->name);
+		pthread_mutex_destroy(&current->mutex);
 	}
 }
 
@@ -356,7 +387,7 @@ int main(int argc, char ** argv){
 
  	if(argc != 4){
  		printf("incorrect number of arguments\n");
- 		return 0;
+ 		return 1;
  	}
 
  	char * database   = argv[1];
@@ -373,4 +404,8 @@ int main(int argc, char ** argv){
 	pthread_t ignore;
 	pthread_create( &ignore, 0, producer, bookOrders );
 	pthread_exit(0);
+
+	QtableDestroyer();
+	customersDestroyer();
+	return 0;
 }
