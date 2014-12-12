@@ -121,7 +121,6 @@ void printSearchResults() {
  * arg contains name of category and the queue
  */
  void * consumer( void * arg ) {
- 	
  	CategoryPtr category = (CategoryPtr) arg;
  	QueuePtr Q = category->queue;
  	char * catName = category->name;
@@ -132,16 +131,17 @@ void printSearchResults() {
 
  	// process while the category is still set to be open
  	while( category->isOpen || Q->size != 0 ) {
+ 		category->isProcessing = 1;
  		// lock the queue
  		pthread_mutex_lock( &Q->mutex );
  		while( Q->size == 0 && category->isOpen  ) {  // wait when there is nothing in the queue to process
  			category->isProcessing = 0;
  			printf("%s%s consumer waits because queue is empty.%s\n", KCYN, catName, KNRM);
  			pthread_cond_wait( &Q->dataAvailable, &Q->mutex );
+	 		category->isProcessing = 1;
  		}
 
  		printf("%s%s consumer resumes because queue has order(s) ready for processing%s\n", KCYN, catName, KNRM);
- 		category->isProcessing = 1;
 
  		BookOrderPtr order;
  		while( (order = (BookOrderPtr) dequeue(Q)) != NULL ) {   // while there is something in the queue to process
@@ -204,6 +204,7 @@ void printSearchResults() {
 	char line[MAXLINELENGTH];
   	char * token;
   	FILE * fp;
+  	/* declare more vars */
 
   	pthread_detach( pthread_self() );
 
@@ -329,13 +330,13 @@ void createCategoryThreads( char * categories ) {
 		tmpCat->queue = q;
 		tmpCat->isOpen = 1;      /* set category to open for processing */
 		tmpCat->isProcessing = 0;
+		pthread_mutex_init( &tmpCat->queue->mutex, 0 );
 
 		// hash into Qtable
 		HASH_ADD_STR(Qtable, name, tmpCat);
 
 		// spawn consumer
 		pthread_create( &tmpCat->tid, 0, consumer, tmpCat );
-
 	}
 }
 
