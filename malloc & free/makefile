@@ -21,4 +21,3 @@ $(OUTPUT): $(EXEOBJ)
 
 clean:
 	rm -f *.o $(OUTPUT)
-#	rm -f $(LIBSL)
