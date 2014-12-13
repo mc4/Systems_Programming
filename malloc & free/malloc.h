@@ -12,9 +12,11 @@
 #define malloc( x )  mymalloc( x, __FILE__, __LINE__ )
 #define free( x )  myfree( x, __FILE__, __LINE__ )
 #define calloc( x )  mycalloc( x, __FILE__, __LINE__ )
+#define realloc( x, y )  myrealloc( x, y, __FILE__, __LINE__ )
 
 /* size macros */
 #define METASIZE  sizeof(struct BlockMeta)
+#define MALLOCMETASIZE  sizeof(struct MallocMeta)
 #define MEMSIZE  5000
 #define BIGBLOCKSIZE  250
 
@@ -23,6 +25,7 @@
 #define META_TO_DATA( x )  ((char*)x + METASIZE)
 #define NEXTBLOCK( x )  (BlockMetaPtr) (META_TO_DATA(x) + (int)x->size)
 
+/* taken from a fortune cookie */
 #define RECOGNITION  2818304339
 
 /* colors */
@@ -39,11 +42,11 @@ struct BlockMeta {
 	unsigned int size;
 };
 
-typedef struct MallocMeta * MallocMetaPtr;
-struct MallocMeta {
-	unsigned int spaceAllocated;
-	unsigned int blocksAllocated;
-};
+// typedef struct MallocMeta * MallocMetaPtr;
+// struct MallocMeta {
+// 	unsigned int spaceAllocated;
+// 	unsigned int blocksAllocated;
+// };
 
 /*
 * malloc function, takes in size to allocate and the file and size macros
@@ -79,3 +82,8 @@ int myfree( void *, char *, unsigned int );
 * also provides protection for writing beyond the bounds of what was allocated cause people are dumb
 */
 void addString( void *, char * );
+
+/*
+* Leak checking
+*/
+void leakCheck( );

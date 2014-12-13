@@ -13,8 +13,8 @@ static BlockMetaPtr blockFront;
 static BlockMetaPtr blockRear;
 
 static char memblock[MEMSIZE];
-
-MallocMetaPtr mallocMeta;
+long unsigned int blocksAllocated;
+long unsigned int spaceAllocated;
 
 /* 
 * malloc function that uses a char array
@@ -51,15 +51,16 @@ void * mymalloc( unsigned int size, char* file, unsigned int line ) {
 		blockFront->size = MEMSIZE - METASIZE;
 		blockFront->isFree = 1;
 		blockFront->recognition = RECOGNITION;
+		blocksAllocated = 0;
+		spaceAllocated = 0;
 		initialized = 1;
+		atexit( leakCheck );
 	}
 
 	if( size < BIGBLOCKSIZE ) {    /* small block - allocate left to right */
 		current = blockFront;
 		BlockMetaPtr prev = 0;
 		do {
-			// BlockMetaPtr succ = (BlockMetaPtr) ((char *)current + METASIZE + current->size);
-			// BlockMetaPtr succ = (BlockMetaPtr) (META_TO_DATA(current) + current->size);
 			BlockMetaPtr succ = NEXTBLOCK(current);
 
 			if (VERBOSE) {
@@ -96,7 +97,10 @@ void * mymalloc( unsigned int size, char* file, unsigned int line ) {
 				if( (char*)succ >= (memblock + MEMSIZE) ) {
 					blockRear = current;
 				}
-				
+
+				blocksAllocated++;
+				spaceAllocated += current->size + METASIZE;
+
 				return (void*) (META_TO_DATA(current));
 			}
 			/* found it, chop up */
@@ -134,6 +138,9 @@ void * mymalloc( unsigned int size, char* file, unsigned int line ) {
 					printf("%s", KNRM);
 				}
 
+				blocksAllocated++;
+				spaceAllocated += current->size + METASIZE;
+
 				return (void*) (META_TO_DATA(current));
 			}
 
@@ -161,6 +168,9 @@ void * mymalloc( unsigned int size, char* file, unsigned int line ) {
 					blockRear = current;
 				}
 
+				blocksAllocated++;
+				spaceAllocated += current->size + METASIZE;
+
 				return (void*) META_TO_DATA(current);
 			}
 			/* found it, chop up */
@@ -184,15 +194,20 @@ void * mymalloc( unsigned int size, char* file, unsigned int line ) {
 					blockRear = newBlock;
 				}
 
-				// return (void*) ((char *)newBlock + METASIZE);
+				blocksAllocated++;
+				spaceAllocated += newBlock->size + METASIZE;
+
 				return (void*) META_TO_DATA(newBlock);
 			}
 
 		} while( (char*)current >= memblock );
 	}
 
-	/* error stuff */
-	printf("error: unable to malloc\n");
+	printf("%s", KRED);
+	printf("error: cannot malloc\n");
+	printf("%s", KGRN);
+	printf("malloc on line %d in file: \"%s\"\n", line, file);
+	printf("%s", KNRM);
 
 	return (void *) 0;
 }
@@ -215,6 +230,22 @@ void * mycalloc( unsigned int size, char* file, unsigned int line ) {
 */
 void * myrealloc( void * data, unsigned int newSize, char * file, unsigned int line ) {
 	BlockMetaPtr current = (BlockMetaPtr)DATA_TO_META(data);
+	if( current->recognition != RECOGNITION ) {
+		printf("%s", KRED);
+		printf("error: cannot realloc a pointer not returned from malloc/ free\n");
+		printf("%s", KGRN);
+		printf("realloc on line %d in file: \"%s\"\n", line, file);
+		printf("%s", KNRM);
+		return (void*)0;
+	}
+	if( current->isFree ) {
+		printf("%s", KRED);
+		printf("error: cannot realloc space already freed\n");
+		printf("%s", KGRN);
+		printf("realloc on line %d in file: \"%s\"\n", line, file);
+		printf("%s", KNRM);
+		return (void*)0;
+	}
 	int oldSize = current->size;
 	char * tmp[oldSize];
 	memcpy( tmp, data, oldSize );   // hold old data temporarily
@@ -250,14 +281,14 @@ int myfree( void * data, char * file, unsigned int line ) {
 	// check recognition pattern to see if valid
 	if ( current->recognition != RECOGNITION ) {
 		printf("%s", KRED);
-		printf("error: cannot free a pointer not returned by malloc\n");
+		printf("error: cannot free a pointer not returned by malloc/ free\n");
 		printf("%s", KGRN);
 		printf("free on line %d in file %s\n", line, file);	
 		printf("%s", KNRM);
 		return 0;
 	}
 
-	// check recognition pattern to see if valid
+	// if free, cannot make free'er
 	if ( current->isFree ) {
 		printf("%s", KRED);
 		printf("error: cannot free already freed block\n");
@@ -267,14 +298,15 @@ int myfree( void * data, char * file, unsigned int line ) {
 		return 0;
 	}
 
+	blocksAllocated--;
+	spaceAllocated -= (current->size + METASIZE);
 	current->isFree = 1;
 
 	/* now check right and left for merging adjacent free blocks */
 	BlockMetaPtr succ = (BlockMetaPtr) NEXTBLOCK(current);
-	if ((char*)succ < (memblock + MEMSIZE)) {   // merge with right if free and exists
-		if( (succ->isFree) ) {
-			if(VERBOSE)  printf("merging right\nblocksize: %d\n",current->size);
-			printf("current blocksize: %d\n", current->size);
+	// if (((char*)succ + succ->size + METASIZE) < (memblock + MEMSIZE)) {   // merge with right if free and exists
+	if (succ < blockRear) {   // merge with right if free and exists
+		if ((succ->isFree)) {
 			
 			BlockMetaPtr succSucc = (BlockMetaPtr)NEXTBLOCK(succ);
 			if((char*)succSucc < (memblock + MEMSIZE)) {
@@ -284,37 +316,23 @@ int myfree( void * data, char * file, unsigned int line ) {
 			current->size += ((succ->size) + METASIZE);
 
 			if(succ == blockRear) {
-				printf("merging right: succ is blockRear\n");
 				blockRear = current;
 			}
 
-			printf("current blocksize after: %d\n", current->size);
-			printf("rearSize = %d\n", blockRear->size);
-			printf("frontSize = %d\n", blockFront->size);
-			printf("frontNextSize = %d\n", ((BlockMetaPtr)NEXTBLOCK(blockFront))->size);
 		}
 	} else {   // if succ doesn't exist, current is last block
 		blockRear = current;
 	}
-	if ( (char*)current != memblock && (current->prev)->isFree ) {   // merge with left if free
-		printf("\nmerging left:current size: %d\n", current->size);
-		printf("prev size before: %d\n", (current->prev)->size);
-		
+	if ( current != blockFront && (current->prev)->isFree ) {   // merge with left if free
 		if((char*)succ < (memblock + MEMSIZE)) {
 			succ->prev = current->prev;
 		}
 
 		(current->prev)->size += (current->size + METASIZE);
 		
-		printf("prev size after: %d\n", (current->prev)->size);
-		
 		if( current == blockRear ) {
-			printf("merge left: current is blockRear\n");
 			blockRear = current->prev;
 		}
-
-		// if(VERBOSE)  printf("merging left\nblocksize: %d\n", (current->prev)->size);
-
 	}
 
 	return 1;
@@ -335,6 +353,22 @@ void addString( void * ptr, char * word ) {
 	}
 	*(((char*)ptr)+i) = '\0';
 }
+
+/*
+* Leak checking
+*/
+void leakCheck( ) {
+	// eek its a leak
+	if( blocksAllocated > 0 ) {
+		printf("%s", KRED);
+		printf("warning: memory leak (did not free all allocated blocks)\n");
+		printf("%s", KGRN);
+		printf("%lu bytes in %lu blocks\n", spaceAllocated, blocksAllocated);	
+		printf("%s", KNRM);
+	}
+	return;
+}
+
 
 int main() {
 	malloc(5001);
@@ -372,6 +406,12 @@ int main() {
 	printf("frontSize = %d\n", blockFront->size);
 	printf("frontNextSize = %d\n\n", ((BlockMetaPtr)NEXTBLOCK(blockFront))->size);
 
+	printf("\nrearSize = %d\n", blockRear->size);
+	test2 = realloc(test2, 15);
+	printf("realloc test2: %s\n", test2);
+	printf("rearSize = %d\n", blockRear->size);
+	printf("frontSize = %d\n", blockFront->size);
+	printf("frontNextSize = %d\n\n", ((BlockMetaPtr)NEXTBLOCK(blockFront))->size);
 
 	// printf("test2: %s\n", test2);
 	// printf("test2 address before: %p\n", test2);
@@ -425,6 +465,8 @@ int main() {
 	printf("rearSize = %d\n", blockRear->size);
 	printf("frontSize = %d\n", blockFront->size);
 	printf("frontNextSize = %d\n", ((BlockMetaPtr)NEXTBLOCK(blockFront))->size);
+
+	char* asasd = (char*)malloc(300);
 
 	return 0;
 }
