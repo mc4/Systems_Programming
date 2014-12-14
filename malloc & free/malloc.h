@@ -42,12 +42,6 @@ struct BlockMeta {
 	unsigned int size;
 };
 
-// typedef struct MallocMeta * MallocMetaPtr;
-// struct MallocMeta {
-// 	unsigned int spaceAllocated;
-// 	unsigned int blocksAllocated;
-// };
-
 /*
 * malloc function, takes in size to allocate and the file and size macros
 * allocated right to left if it is a big block (as defined by the BIGBLOCKSIZE macro)
