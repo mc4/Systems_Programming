@@ -14,6 +14,18 @@
 
 int main(void){
 
+	 This test will intentionally create a scenario   
+  where the "heap" is highly fragmented. This will 
+  be done with a calculated series of mallocs and  
+  frees.  											
+
+printf("#######################################################\n");
+printf("This test will intentionally create a scenario ");   
+printf("where the "heap" is highly fragmented. This will "); 
+printf("be done with a calculated series of mallocs and frees.");
+printf("refer to the source code in test1.c\n")
+printf("#######################################################\n");
+
 /* malloc small chunks, anything less than 250 
    is not considered a big block. small blocks 
    are malloced from left to the right */
