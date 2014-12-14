@@ -1,0 +1,12 @@
+/*
+* Michael Newman && Mark Conley
+* Systems Programming
+* Assignment 6: malloc() and free()
+* test case write up
+*/
+
+We used 3 test cases for our program. Our first test will intentionally create a scenario where the "heap" is highly fragmented. This will be done with a calculated series of mallocs and frees. Once we do this we do another series of mallocs and frees to see how our implementation behaves in a fragmented and saturated evironment. Our code produces output that clearly demonstrates what's going on and details what the errors are.
+
+In our second test we tried to break our malloc and free in a variety of ways. First we try to free an int that wasn't dynamically allocated. Next, we malloc and int pointer and try to free at other addresses not returned by malloc. We also test for redundant freeing. Then we reuse a variable that has been malloc'd and free'd. Next we put the "heap" to full capacity and trying to malloc. All of these scenarios display a corresponding error messages.
+
+In our third test case demonstrated our a special helper functions: addString and leakCheck. addString provides protection for writing beyond the bounds of what was allocated. We show this by mallocing for a limited number of characters and trying to write a string that's larger than what was allocated. We print the string to show that the pointer only points to the space allocated. Also we implemented a leak check function that at exit tells the user how much space and how many blocks have not been freed.

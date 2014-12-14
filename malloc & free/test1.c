@@ -12,12 +12,7 @@
 
 #include "malloc.c"
 
-int main(void){
-
-	 This test will intentionally create a scenario   
-  where the "heap" is highly fragmented. This will 
-  be done with a calculated series of mallocs and  
-  frees.  											
+int main(void){ 											
 
 printf("#######################################################\n");
 printf("This test will intentionally create a scenario ");   

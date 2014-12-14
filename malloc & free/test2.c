@@ -21,7 +21,7 @@ free(bigInt)
 int * testInt = (int *)malloc(10);
 /* should throw errors because these address were never returned by malloc */
 printf("####################################\n");
-printf("Tring to free a dynamically allocated int pointer ");\
+printf("Tring to free a dynamically allocated int pointer ");
 printf("at an address not returned by malloc\n");
 printf("####################################\n");
 free(testInt + 1);
